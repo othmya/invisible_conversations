@@ -1,0 +1,10 @@
+
+torch
+torchaudio
+scikit-learn
+tqdm
+matplotlib
+umap
+umap_learn
+numpy
+ipympl
