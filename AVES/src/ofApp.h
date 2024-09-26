@@ -39,6 +39,7 @@ public:
         int index;
         float time;
     };
+    
     vector<Intersection> recentIntersections;
 
     float intersectionDuration;
@@ -73,4 +74,5 @@ public:
 
     // Shift pressed for initializing walk
     // bool shiftPressed;
+    
 };

@@ -49,7 +49,7 @@ void ofApp::setup() {
 
     rotationSpeed = 0.0005; // Slow down rotation
     rotationAngle = 0.0;
-    sphereSize = 0.05;
+    sphereSize = 2;
     zoomFactor = 1.0;
     moveSpeed = 0.5f;  // Slow down the movement speed for more control
     ofSetFrameRate(60);
@@ -58,13 +58,13 @@ void ofApp::setup() {
     // Set up the camera to start closer to the point cloud
     cam.setDistance(100); // Adjust this value to set the initial distance
     cam.setPosition(0, 0, 100); // Set an initial position
-    cam.lookAt(ofVec3f(0, 0, 0), ofVec3f(0, 1, 0)); // Look at the center
+    cam.lookAt(ofVec3f(0, 0, 0), ofVec3f(0, 1, 0)); // Look at the centerç
+    // cam.disableMouseInput();
 
 
     currentNodeIndex = ofRandom(points.size());
     currentPosition = points[currentNodeIndex];
     nextNodeDistanceProb = 0.7; // 70% chance of choosing a closer node
-    stochasticityProb = 0.1; // 10% chance of random jump
 
     targetPosition = currentPosition;
     transitionSpeed = 0.05f; // Adjust this value to control the speed of movement
@@ -73,7 +73,6 @@ void ofApp::setup() {
     gui = new ofxDatGui(ofxDatGuiAnchor::TOP_RIGHT);
     
     nextNodeDistanceSlider = gui->addSlider("Next Node Distance", 0, 1, nextNodeDistanceProb);
-    stochasticitySlider = gui->addSlider("Stochasticity", 0, 1, stochasticityProb);
     resetZoomButton = gui->addButton("Reset Zoom");
     
     gui->onSliderEvent(this, &ofApp::onSliderEvent);
@@ -81,12 +80,12 @@ void ofApp::setup() {
     
     gui->setAutoDraw(false);
 
-    // Customize the sliders and button
+
+    // Customize the slider and button
     nextNodeDistanceSlider->setWidth(300, 0.3);
-    stochasticitySlider->setWidth(300, 0.3);
     resetZoomButton->setWidth(300);
     nextNodeDistanceSlider->setLabelAlignment(ofxDatGuiAlignment::LEFT);
-    stochasticitySlider->setLabelAlignment(ofxDatGuiAlignment::LEFT);
+
 
     // Set the GUI theme to improve visibility
     gui->setTheme(new ofxDatGuiThemeSmoke());
@@ -95,20 +94,14 @@ void ofApp::setup() {
     gui->setPosition(ofGetWidth() - 320, 20);
 
     // Set up instruction text
-    instructionText = "Hold SHIFT and click a node to start exploring the latent space\nUse WASD to rotate the point cloud";
+    instructionText = "Use WASD to rotate the point cloud";
 
     // Font loading
     font.load("verdana.ttf", 20);
 
-    // shiftPressed = false;
-
     rotationX = 0;
     rotationY = 0;
     rotateLeft = rotateRight = rotateUp = rotateDown = false;
-
-    nextNodeDistanceSlider = gui->addSlider("Next Node Distance", 0, 1, 0.7);
-    stochasticitySlider = gui->addSlider("Stochasticity", 0, 1, 0.1);
-
 }
 
 //--------------------------------------------------------------
@@ -125,54 +118,32 @@ void ofApp::update() {
     // Smoothly move towards the target position
     currentPosition = currentPosition.getInterpolated(targetPosition, transitionSpeed);
 
- 
     // Only choose a new target when we're close to the current target
     if (currentPosition.distance(targetPosition) < 0.1) {
-        // Perform random walk
-        // ... existing random walk code ...
-        
-        targetPosition = points[currentNodeIndex];
-
-        // Add to visited nodes
-        if (std::find(visitedNodes.begin(), visitedNodes.end(), currentNodeIndex) == visitedNodes.end()) {
-            visitedNodes.push_back(currentNodeIndex);
+        // Find next node based on distance probability
+        vector<pair<int, float>> distances;
+        for (int i = 0; i < points.size(); ++i) {
+            if (i != currentNodeIndex) {
+                float dist = currentPosition.distance(points[i]);
+                distances.push_back(make_pair(i, dist));
+            }
         }
-    }
-
-
-   // Only choose a new target when we're close to the current target
-    if (currentPosition.distance(targetPosition) < 0.1) {
-        // Perform random walk
-        if (ofRandom(1.0) < stochasticitySlider->getValue()) {
-            // Random jump
-            currentNodeIndex = ofRandom(points.size());
+        
+        sort(distances.begin(), distances.end(), 
+             [](const pair<int, float>& a, const pair<int, float>& b) {
+                 return a.second < b.second;
+             });
+        
+        int nextNodeIndex;
+        if (ofRandom(1.0) < nextNodeDistanceProb) {
+            // Choose a closer node
+            nextNodeIndex = distances[ofRandom(distances.size() / 2)].first;
         } else {
-            // Find next node based on distance probability
-            vector<pair<int, float>> distances;
-            for (int i = 0; i < points.size(); ++i) {
-                if (i != currentNodeIndex) {
-                    float dist = currentPosition.distance(points[i]);
-                    distances.push_back(make_pair(i, dist));
-                }
-            }
-            
-            sort(distances.begin(), distances.end(), 
-                 [](const pair<int, float>& a, const pair<int, float>& b) {
-                     return a.second < b.second;
-                 });
-            
-            int nextNodeIndex;
-            if (ofRandom(1.0) < nextNodeDistanceSlider->getValue()) {
-                // Choose a closer node
-                nextNodeIndex = distances[ofRandom(distances.size() / 2)].first;
-            } else {
-                // Choose a farther node
-                nextNodeIndex = distances[ofRandom(distances.size() / 2, distances.size())].first;
-            }
-            
-            currentNodeIndex = nextNodeIndex;
+            // Choose a farther node
+            nextNodeIndex = distances[ofRandom(distances.size() / 2, distances.size())].first;
         }
         
+        currentNodeIndex = nextNodeIndex;
         targetPosition = points[currentNodeIndex];
 
         // Add to visited nodes
@@ -180,57 +151,6 @@ void ofApp::update() {
             visitedNodes.push_back(currentNodeIndex);
         }
     }
-
-    // Update intersections
-    // intersectingPaths.clear();
-    // intersectingSpecies.clear();
-    // intersectingRemarks.clear();
-
-    // float intersectionRadius = 5.0; // Adjust this value as needed
-
-    // for (size_t i = 0; i < points.size(); ++i) {
-    //     float distance = currentPosition.distance(points[i]);
-        
-    //     if (distance < intersectionRadius) {
-    //         if (!pointIntersected[i]) {
-    //             // Point just intersected
-    //             recentIntersections.push_back({static_cast<int>(i), currentTime});
-    //         }
-    //         pointIntersected[i] = true;
-
-    //         // Store intersecting paths and species names
-    //         intersectingPaths.push_back(paths[i]);
-    //         intersectingSpecies.push_back(speciesNames[i]);
-    //         intersectingRemarks.push_back(remarks[i]);
-    //     } else {
-    //         pointIntersected[i] = false;
-    //     }
-    // }
-
-    // // Remove old intersections
-    // recentIntersections.erase(
-    //     std::remove_if(recentIntersections.begin(), recentIntersections.end(),
-    //         [currentTime, this](const Intersection& i) {
-    //             return currentTime - i.time > intersectionDuration;
-    //         }),
-    //     recentIntersections.end());
-    
-
-
-    // Only add to visited nodes when we reach a new node
-    // if (currentPosition.distance(targetPosition) < 0.1) {
-    //     if (std::find(visitedNodes.begin(), visitedNodes.end(), currentNodeIndex) == visitedNodes.end()) {
-    //         visitedNodes.push_back(currentNodeIndex);
-    //     }
-    // }
-
-    // Apply rotation based on key presses
-    // float rotationSpeed = 1.0; // Adjust this value to change rotation speed
-    // if (rotateLeft) rotationY -= rotationSpeed;
-    // if (rotateRight) rotationY += rotationSpeed;
-    // if (rotateUp) rotationX -= rotationSpeed;
-    // if (rotateDown) rotationX += rotationSpeed;
-
 
     gui->update();
 }
@@ -257,7 +177,7 @@ void ofApp::draw() {
         if (i == currentNodeIndex) {
             pointCloud.addColor(ofColor(255, 0, 0, 255)); // Red for current node
         } else if (std::find(visitedNodes.begin(), visitedNodes.end(), i) != visitedNodes.end()) {
-            pointCloud.addColor(ofColor(255, 0, 0, 255)); // Red for visited nodes
+            pointCloud.addColor(ofColor(0, 255, 0, 255)); // Red for visited nodes
         } else if (pointIntersected[i]) {
             pointCloud.addColor(ofColor(46, 22, 77, 255)); // Purple for intersecting points
         } else {
@@ -270,7 +190,7 @@ void ofApp::draw() {
 
     // Draw the path of the random walk
     if (visitedNodes.size() > 1) {
-        ofSetColor(255, 255, 0, 150); // Yellow with some transparency
+        ofSetColor(209, 174, 235, 150); // Yellow with some transparency
         ofSetLineWidth(2);
         ofNoFill();
         ofBeginShape();
@@ -281,7 +201,7 @@ void ofApp::draw() {
     }
 
     // Draw connections from current node to nearby nodes
-    ofSetColor(191, 189, 217, 150); // Purple for connections
+    ofSetColor(191, 189, 217, 50); // Purple for connections
     for (size_t i = 0; i < points.size(); ++i) {
         if (i != currentNodeIndex && currentPosition.distance(points[i]) < 10.0) {
             ofDrawLine(currentPosition, points[i]);
@@ -313,8 +233,6 @@ void ofApp::draw() {
 void ofApp::onSliderEvent(ofxDatGuiSliderEvent e) {
     if (e.target == nextNodeDistanceSlider) {
         nextNodeDistanceProb = e.value;
-    } else if (e.target == stochasticitySlider) {
-        stochasticityProb = e.value;
     }
 }
 
