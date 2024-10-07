@@ -5,8 +5,8 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
-    std::string jsonFilePath = "/home/oth/Downloads/OpenFrameworks/apps/myApps/AVES/bin/data/output_all_v1.json"; 
-
+    // std::string jsonFilePath = "/home/oth/Downloads/OpenFrameworks/apps/myApps/AVES/bin/data/output_all_v1.json"; 
+ std::string jsonFilePath = "/Users/thalia/Antoine/audiotsne/ml4a-ofx/apps/AudioTSNEViewer/bin/data/output.json";
     ofxJSONElement json;
     bool success = json.open(jsonFilePath);
 
@@ -21,10 +21,10 @@ void ofApp::setup() {
 
                     // Extract and store the path
                     std::string path = json[i].isMember("path") ? json[i]["path"].asString() : "";
-                    size_t pos = path.find_last_of('/');
-                    if (pos != std::string::npos) {
-                        path = path.substr(pos + 1);
-                    }
+                    // size_t pos = path.find_last_of('/');
+                    // if (pos != std::string::npos) {
+                    //     path = path.substr(pos + 1);
+                    // }
                     paths.push_back(path); // Store the processed path
 
                     // Extract and store the species name
@@ -102,6 +102,9 @@ void ofApp::setup() {
     rotationX = 0;
     rotationY = 0;
     rotateLeft = rotateRight = rotateUp = rotateDown = false;
+
+    soundPlayer.setMultiPlay(true);  // Allows overlapping sound if accessed quickly
+    soundPlayer.setLoop(false);  
 }
 
 //--------------------------------------------------------------
@@ -145,7 +148,9 @@ void ofApp::update() {
         
         currentNodeIndex = nextNodeIndex;
         targetPosition = points[currentNodeIndex];
-
+        // thalia additions
+        soundPlayer.load(paths[currentNodeIndex]);
+        soundPlayer.play();
         // Add to visited nodes
         if (std::find(visitedNodes.begin(), visitedNodes.end(), currentNodeIndex) == visitedNodes.end()) {
             visitedNodes.push_back(currentNodeIndex);

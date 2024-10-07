@@ -1,3 +1,5 @@
+ofxDatGui
+ofxDropdown
 ofxGui
 ofxJSON
-ofxDatGui
+ofxOsc

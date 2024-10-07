@@ -74,5 +74,7 @@ public:
 
     // Shift pressed for initializing walk
     // bool shiftPressed;
-    
+    // additions thalia
+    ofSoundPlayer soundPlayer;
+
 };
