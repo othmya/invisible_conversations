@@ -2,6 +2,8 @@
 #include "ofMain.h"
 #include "ofxJSON.h"
 #include "ofxDatGui.h"
+#include <unordered_map>
+#include <vector>
 
 class ofApp : public ofBaseApp{
 public:
@@ -72,7 +74,39 @@ public:
     // Instruction text
     string instructionText;
 
+    // Audio players for crossfade
+    ofSoundPlayer currentSoundPlayer; // The currently playing sound
+    ofSoundPlayer nextSoundPlayer; // The next sound to crossfade to
+    float crossfadeDuration; // Duration of the crossfade in seconds
+    float currentVolume; // Current volume of the current sound
+    float nextVolume; // Current volume of the next sound
+    bool isCrossfading; // Flag to indicate if a crossfade is in progress
+    float crossfadeStartTime; // Start time for the crossfade
+
     // Shift pressed for initializing walk
     // bool shiftPressed;
-    
+    // additions thalia
+    ofSoundPlayer soundPlayer;
+
+    // New variables for landuse categories and colors
+    std::vector<std::string> landuseCategories; // Stores landuse categories
+    std::unordered_map<std::string, ofColor> landuseColorMap; // Map for landuse to color
+    std::vector<ofColor> availableColors; // Vector of available colors
+
+    // New variable for previous colors for crossfade effect
+    std::vector<ofColor> previousColors; // To store the previous colors of the points
+
+    // New variable for trail timing
+    float trailStartTime; // To store the time when the trail starts
+
+    // Add these lines to your ofApp class definition in ofApp.h
+    std::vector<int> timeValues; // To store the transformed time values
+    std::string colorMode; // To store the current color mode ("landuse" or "time")
+
+    // Add the declaration for the dropdown event handler
+    void onDropdownEvent(ofxDatGuiDropdownEvent e); // <-- Add this line
+
+    // Another slider for coloring area
+    ofxDatGuiSlider* distanceThresholdSlider; // Slider for distance threshold
+    float distanceThreshold; // Variable to store the distance threshold value
 };

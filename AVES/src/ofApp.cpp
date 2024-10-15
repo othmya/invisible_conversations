@@ -1,12 +1,44 @@
 #include "ofApp.h"
 #include "ofxJSON.h"
 #include "ofxDatGui.h"
-// #include "ofxVideoRecorder.h"
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+
+std::vector<ofColor> availableColors = {
+    ofColor(255, 0, 0),    // Red
+    ofColor(0, 255, 0),    // Green
+    ofColor(0, 0, 255),    // Blue
+    ofColor(255, 255, 0),  // Yellow
+    ofColor(255, 165, 0),  // Orange
+    ofColor(128, 0, 128),  // Purple
+    ofColor(0, 255, 255),  // Cyan
+    ofColor(255, 192, 203)  // Pink
+};
+
+
+// Function to count unique landuse categories
+int countUniqueLanduseCategories(const std::vector<std::string>& landuseCategories) {
+    std::unordered_set<std::string> uniqueCategories(landuseCategories.begin(), landuseCategories.end());
+    return uniqueCategories.size();
+}
+
+// Function to generate color for landuse based on index
+ofColor generateColorForLanduse(int index, int maxCategories) {
+    // Generate a color based on the index and the number of unique categories
+    float hue = ofMap(index, 0, maxCategories - 1, 0, 255); // Map index to hue
+    return ofColor::fromHsb(hue, 255, 255); // HSB color space
+}
+
+ofColor generateColorForTime(int timeValue) {
+    // Map timeValue (HHMM) to a color
+    float normalizedTime = ofMap(timeValue, 0, 2359, 0, 1); // Normalize to [0, 1]
+    return ofColor::fromHsb(normalizedTime * 255, 255, 255); // HSB color space
+}
 
 //--------------------------------------------------------------
 void ofApp::setup() {
     std::string jsonFilePath = "/home/oth/Downloads/OpenFrameworks/apps/myApps/AVES/bin/data/output_all_v1.json"; 
-
     ofxJSONElement json;
     bool success = json.open(jsonFilePath);
 
@@ -19,12 +51,12 @@ void ofApp::setup() {
                     float z = json[i]["point"][2].asFloat();
                     points.push_back(ofVec3f(x, y, z));
 
-                    // Extract and store the path
+                    // Extract and store the path (This is where the MP3 file is stored)
                     std::string path = json[i].isMember("path") ? json[i]["path"].asString() : "";
-                    size_t pos = path.find_last_of('/');
-                    if (pos != std::string::npos) {
-                        path = path.substr(pos + 1);
-                    }
+                    // size_t pos = path.find_last_of('/');
+                    // if (pos != std::string::npos) {
+                    //     path = path.substr(pos + 1);
+                    // }
                     paths.push_back(path); // Store the processed path
 
                     // Extract and store the species name
@@ -36,6 +68,30 @@ void ofApp::setup() {
                     remarks.push_back(remark);
 
                     pointIntersected.push_back(false);
+
+                    // Extract and store the landuse category
+                    std::string landuse = json[i].isMember("landuse") ? json[i]["landuse"].asString() : "";
+                    landuseCategories.push_back(landuse);
+
+                    // // Assign a color if this landuse category is new
+                    // if (landuseColorMap.find(landuse) == landuseColorMap.end()) {
+                    //     ofColor color = generateColor(landuseColorMap.size());
+                    //     landuseColorMap[landuse] = color;
+                    // }
+
+                    // Extract and store the time variable
+                    std::string timeStr = json[i].isMember("time") ? json[i]["time"].asString() : "";
+                    if (!timeStr.empty()) {
+                        // Transform HH:MM to HHMM
+                        size_t colonPos = timeStr.find(':');
+                        if (colonPos != std::string::npos) {
+                            int hours = std::stoi(timeStr.substr(0, colonPos));
+                            int minutes = std::stoi(timeStr.substr(colonPos + 1));
+                            int timeValue = hours * 100 + minutes; // Convert to HHMM format
+                            timeValues.push_back(timeValue);
+                        }
+                    }
+
                 } catch (const std::exception& e) {
                     ofLogError("JSON Parsing Error") << "Error parsing point at index " << i << ": " << e.what();
                 }
@@ -58,7 +114,7 @@ void ofApp::setup() {
     // Set up the camera to start closer to the point cloud
     cam.setDistance(100); // Adjust this value to set the initial distance
     cam.setPosition(0, 0, 100); // Set an initial position
-    cam.lookAt(ofVec3f(0, 0, 0), ofVec3f(0, 1, 0)); // Look at the centerç
+    cam.lookAt(ofVec3f(0, 0, 0), ofVec3f(0, 1, 0)); // Look at the center
     // cam.disableMouseInput();
 
 
@@ -94,7 +150,7 @@ void ofApp::setup() {
     gui->setPosition(ofGetWidth() - 320, 20);
 
     // Set up instruction text
-    instructionText = "Use WASD to rotate the point cloud";
+    // instructionText = "Use WASD to rotate the point cloud";
 
     // Font loading
     font.load("verdana.ttf", 20);
@@ -102,6 +158,23 @@ void ofApp::setup() {
     rotationX = 0;
     rotationY = 0;
     rotateLeft = rotateRight = rotateUp = rotateDown = false;
+
+    soundPlayer.setMultiPlay(true);  // Allows overlapping sound if accessed quickly
+    soundPlayer.setLoop(false);  
+
+    // Initialize previousColors with the same size as points
+    previousColors.resize(points.size(), ofColor(0, 0, 0, 0)); // Initialize with transparent black
+
+    // Add a dropdown for color selection
+    auto colorModeDropdown = gui->addDropdown("Color Mode", {"Landuse", "Time"});
+    colorModeDropdown->onDropdownEvent(this, &ofApp::onDropdownEvent);
+
+    // Add a slider for distance threshold
+    distanceThreshold = 1.0f; // Set an initial value for the distance threshold
+
+    // Create a slider for distance threshold
+    distanceThresholdSlider = gui->addSlider("Distance Threshold", 1, 100, distanceThreshold);
+    distanceThresholdSlider->onSliderEvent(this, &ofApp::onSliderEvent); // Attach event handler
 }
 
 //--------------------------------------------------------------
@@ -146,10 +219,38 @@ void ofApp::update() {
         currentNodeIndex = nextNodeIndex;
         targetPosition = points[currentNodeIndex];
 
+        // thalia additions
+        soundPlayer.load(paths[currentNodeIndex]);
+        soundPlayer.play();
+        
         // Add to visited nodes
         if (std::find(visitedNodes.begin(), visitedNodes.end(), currentNodeIndex) == visitedNodes.end()) {
             visitedNodes.push_back(currentNodeIndex);
         }
+
+        if (isCrossfading) {
+            // Calculate the elapsed time since the crossfade started
+            float elapsedTime = ofGetElapsedTimef() - crossfadeStartTime;
+            float t = ofMap(elapsedTime, 0, crossfadeDuration, 0, 1, true); // Normalize to [0, 1]
+
+            // Update volumes based on the elapsed time
+            currentVolume = 1.0f - t; // Fade out current sound
+            nextVolume = t; // Fade in next sound
+
+            // Set the volumes
+            currentSoundPlayer.setVolume(currentVolume);
+            nextSoundPlayer.setVolume(nextVolume);
+
+            // Check if the crossfade is complete
+            if (elapsedTime >= crossfadeDuration) {
+                isCrossfading = false; // End crossfade
+                currentSoundPlayer.stop(); // Stop the current sound
+                currentSoundPlayer = nextSoundPlayer; // Move next sound to current
+            }
+        }
+
+        // Set the trail start time when a new node is visited
+        trailStartTime = ofGetElapsedTimef(); // Record the current time
     }
 
     gui->update();
@@ -169,28 +270,49 @@ void ofApp::draw() {
     ofRotateXDeg(rotationX);
     ofRotateYDeg(rotationY);
 
+    // In the draw function, modify the point drawing logic
+    int maxLanduseCategories = countUniqueLanduseCategories(landuseCategories); // Get the count of unique categories
+
     // Draw the point cloud (only once)
     ofMesh pointCloud;
     pointCloud.setMode(OF_PRIMITIVE_POINTS);
+    // In the draw function, modify the point drawing logic
     for (size_t i = 0; i < points.size(); ++i) {
         pointCloud.addVertex(points[i]);
-        if (i == currentNodeIndex) {
-            pointCloud.addColor(ofColor(255, 0, 0, 255)); // Red for current node
-        } else if (std::find(visitedNodes.begin(), visitedNodes.end(), i) != visitedNodes.end()) {
-            pointCloud.addColor(ofColor(0, 255, 0, 255)); // Red for visited nodes
-        } else if (pointIntersected[i]) {
-            pointCloud.addColor(ofColor(46, 22, 77, 255)); // Purple for intersecting points
-        } else {
-            pointCloud.addColor(ofColor(255, 255, 255, 255)); // White for non-intersecting points
+
+        // Set the default color to black
+        ofColor currentColor = ofColor(0, 0, 0); // Default to black
+
+        // Check if the point is nearby using the distance threshold
+        if (currentPosition.distance(points[i]) < distanceThreshold) {
+            // Color based on the selected mode
+            if (colorMode == "Landuse") {
+                // Generate color based on the index of the landuse category
+            int landuseIndex = std::distance(landuseCategories.begin(), std::find(landuseCategories.begin(), landuseCategories.end(), landuseCategories[i]));
+            currentColor = generateColorForLanduse(landuseIndex, maxLanduseCategories); // Pass the max categories
+            } else if (colorMode == "Time") {
+                // Get the color based on time
+                if (i < timeValues.size()) {
+                    currentColor = generateColorForTime(timeValues[i]);
+                }
+            }
+
         }
+
+        // Interpolate between the previous color and the current color
+        ofColor interpolatedColor = previousColors[i].getLerped(currentColor, 0.1); // 0.1 is the interpolation factor
+        pointCloud.addColor(interpolatedColor);
+
+        // Update the previous color to the current color for the next frame
+        previousColors[i] = currentColor;
     }
     
-    glPointSize(sphereSize * ofGetWidth() / 1000.0);
+    glPointSize(sphereSize * ofGetWidth() / 500.0); // Point size based on screen width
     pointCloud.draw();
 
     // Draw the path of the random walk
-    if (visitedNodes.size() > 1) {
-        ofSetColor(209, 174, 235, 150); // Yellow with some transparency
+    if (ofGetElapsedTimef() - trailStartTime < 15.0f) {
+        ofSetColor(255, 255, 255, 50); // Change color to white with some transparency
         ofSetLineWidth(2);
         ofNoFill();
         ofBeginShape();
@@ -225,14 +347,24 @@ void ofApp::draw() {
     ofSetColor(255, 255, 255);
     font.drawString(speciesName, x, y + bounds.height);
 
+    // Draw landuse categories on the left side of the window
+    ofSetColor(255, 255, 255);
+    float yOffset = 30; // Starting y position
+    for (const auto& category : landuseColorMap) {
+        ofSetColor(category.second);
+        font.drawString(category.first, 20, yOffset);
+        yOffset += 20; // Increment y position for the next category
+    }
+
     // Draw the GUI last to ensure it's on top
     gui->draw();
 }
 
 //--------------------------------------------------------------
 void ofApp::onSliderEvent(ofxDatGuiSliderEvent e) {
-    if (e.target == nextNodeDistanceSlider) {
-        nextNodeDistanceProb = e.value;
+    if (e.target == distanceThresholdSlider) {
+        distanceThreshold = e.value; // Update the distance threshold
+        ofLog() << "Distance Threshold updated to: " << distanceThreshold; // Log for debugging
     }
 }
 
@@ -245,6 +377,11 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
     }
 }
 
+
+//--------------------------------------------------------------
+void ofApp::onDropdownEvent(ofxDatGuiDropdownEvent e) {
+    colorMode = e.target->getLabel(); // Store the selected color mode
+}
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
@@ -261,24 +398,3 @@ void ofApp::keyReleased(int key) {
     if (key == 'w') rotateUp = false;
     if (key == 's') rotateDown = false;
 }
-
-
-// //--------------------------------------------------------------
-// void ofApp::startRecording() {
-//     if (!isRecording) {
-//         // Setup video recorder
-//         videoRecorder.setup(videoFilePath, ofGetWidth(), ofGetHeight(), 30); // Check if frame rate is supported
-//         isRecording = true;
-//         frameCount = 0;
-//         ofLogNotice() << "Recording started";
-//     }
-// }
-
-// //--------------------------------------------------------------
-// void ofApp::stopRecording() {
-//     if (isRecording) {
-//         videoRecorder.close(); // Finalize and close the video file
-//         isRecording = false;
-//         ofLogNotice() << "Recording stopped";
-//     }
-// }
