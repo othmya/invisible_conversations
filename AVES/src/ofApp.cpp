@@ -121,6 +121,7 @@ void ofApp::setup() {
     currentNodeIndex = ofRandom(points.size());
     currentPosition = points[currentNodeIndex];
     nextNodeDistanceProb = 0.7; // 70% chance of choosing a closer node
+    localWalkDistanceThreshold = 2.0f; // Adjust this value as needed
 
     targetPosition = currentPosition;
     transitionSpeed = 0.05f; // Adjust this value to control the speed of movement
@@ -170,10 +171,10 @@ void ofApp::setup() {
     colorModeDropdown->onDropdownEvent(this, &ofApp::onDropdownEvent);
 
     // Add a slider for distance threshold
-    distanceThreshold = 1.0f; // Set an initial value for the distance threshold
+    distanceThreshold = 10.0f; // Set an initial value for the distance threshold
 
     // Create a slider for distance threshold
-    distanceThresholdSlider = gui->addSlider("Distance Threshold", 1, 100, distanceThreshold);
+    distanceThresholdSlider = gui->addSlider("Distance Threshold", 1, 25, distanceThreshold);
     distanceThresholdSlider->onSliderEvent(this, &ofApp::onSliderEvent); // Attach event handler
 }
 
@@ -181,76 +182,49 @@ void ofApp::setup() {
 void ofApp::update() {
     float currentTime = ofGetElapsedTimef();
 
-    // Apply rotation based on key presses
-    float rotationSpeed = 1.0; // Adjust this value to change rotation speed
-    if (rotateLeft) rotationY -= rotationSpeed;
-    if (rotateRight) rotationY += rotationSpeed;
-    if (rotateUp) rotationX -= rotationSpeed;
-    if (rotateDown) rotationX += rotationSpeed;
-
     // Smoothly move towards the target position
     currentPosition = currentPosition.getInterpolated(targetPosition, transitionSpeed);
 
     // Only choose a new target when we're close to the current target
     if (currentPosition.distance(targetPosition) < 0.1) {
-        // Find next node based on distance probability
-        vector<pair<int, float>> distances;
+        // Find next node based on distance threshold
+        vector<int> nearbyNodes; // Vector to store nearby node indices
         for (int i = 0; i < points.size(); ++i) {
             if (i != currentNodeIndex) {
                 float dist = currentPosition.distance(points[i]);
-                distances.push_back(make_pair(i, dist));
+                if (dist < localWalkDistanceThreshold) { // Check if within the distance threshold
+                    nearbyNodes.push_back(i); // Add to nearby nodes
+                }
             }
         }
-        
-        sort(distances.begin(), distances.end(), 
-             [](const pair<int, float>& a, const pair<int, float>& b) {
-                 return a.second < b.second;
-             });
-        
-        int nextNodeIndex;
-        if (ofRandom(1.0) < nextNodeDistanceProb) {
-            // Choose a closer node
-            nextNodeIndex = distances[ofRandom(distances.size() / 2)].first;
+
+        // If there are nearby nodes, randomly select one
+        if (!nearbyNodes.empty()) {
+            currentNodeIndex = nearbyNodes[ofRandom(nearbyNodes.size())]; // Select a random nearby node
+            targetPosition = points[currentNodeIndex]; // Set the new target position
+
+            // Create a new sound player for the current node
+            ofSoundPlayer newSoundPlayer;
+            if (newSoundPlayer.load(paths[currentNodeIndex])) {
+                newSoundPlayer.setMultiPlay(true); // Allows overlapping sound
+                newSoundPlayer.setLoop(false); // Set to loop if needed
+                newSoundPlayer.setVolume(1.0); // Set volume to maximum
+                newSoundPlayer.play(); // Play the sound
+                soundPlayers.push_back(newSoundPlayer); // Store the sound player in the vector
+            } else {
+                ofLogError("Audio Load Error") << "Failed to load audio file: " << paths[currentNodeIndex];
+            }
+        }
+    }
+
+    
+    // Optionally, you can check for finished sounds and remove them from the vector
+    for (auto it = soundPlayers.begin(); it != soundPlayers.end(); ) {
+        if (!it->isPlaying()) {
+            it = soundPlayers.erase(it); // Remove finished sounds
         } else {
-            // Choose a farther node
-            nextNodeIndex = distances[ofRandom(distances.size() / 2, distances.size())].first;
+            ++it; // Move to the next sound
         }
-        
-        currentNodeIndex = nextNodeIndex;
-        targetPosition = points[currentNodeIndex];
-
-        // thalia additions
-        soundPlayer.load(paths[currentNodeIndex]);
-        soundPlayer.play();
-        
-        // Add to visited nodes
-        if (std::find(visitedNodes.begin(), visitedNodes.end(), currentNodeIndex) == visitedNodes.end()) {
-            visitedNodes.push_back(currentNodeIndex);
-        }
-
-        if (isCrossfading) {
-            // Calculate the elapsed time since the crossfade started
-            float elapsedTime = ofGetElapsedTimef() - crossfadeStartTime;
-            float t = ofMap(elapsedTime, 0, crossfadeDuration, 0, 1, true); // Normalize to [0, 1]
-
-            // Update volumes based on the elapsed time
-            currentVolume = 1.0f - t; // Fade out current sound
-            nextVolume = t; // Fade in next sound
-
-            // Set the volumes
-            currentSoundPlayer.setVolume(currentVolume);
-            nextSoundPlayer.setVolume(nextVolume);
-
-            // Check if the crossfade is complete
-            if (elapsedTime >= crossfadeDuration) {
-                isCrossfading = false; // End crossfade
-                currentSoundPlayer.stop(); // Stop the current sound
-                currentSoundPlayer = nextSoundPlayer; // Move next sound to current
-            }
-        }
-
-        // Set the trail start time when a new node is visited
-        trailStartTime = ofGetElapsedTimef(); // Record the current time
     }
 
     gui->update();

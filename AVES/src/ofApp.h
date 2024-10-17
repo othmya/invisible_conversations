@@ -2,6 +2,7 @@
 #include "ofMain.h"
 #include "ofxJSON.h"
 #include "ofxDatGui.h"
+#include "ofSoundPlayer.h" 
 #include <unordered_map>
 #include <vector>
 
@@ -51,6 +52,7 @@ public:
     int currentNodeIndex;
     float nextNodeDistanceProb;
     float stochasticityProb;
+    float localWalkDistanceThreshold;
 
     // New variables for smooth transitions
     ofVec3f targetPosition;
@@ -109,4 +111,10 @@ public:
     // Another slider for coloring area
     ofxDatGuiSlider* distanceThresholdSlider; // Slider for distance threshold
     float distanceThreshold; // Variable to store the distance threshold value
+
+
+    // Sound player
+    std::vector<ofSoundPlayer> soundPlayers; // Vector to hold multiple sound players
+
+
 };
