@@ -116,5 +116,14 @@ public:
     // Sound player
     std::vector<ofSoundPlayer> soundPlayers; // Vector to hold multiple sound players
 
+    // Bias category and dropdown
+    std::string biasCategory; // To store the selected bias category
+    ofxDatGuiDropdown* biasDropdown; // Dropdown for bias selection
+    ofxDatGuiDropdown* colorModeDropdown; // Dropdown for color mode selection
+    ofxDatGuiDropdown* speciesDropdown; // Dropdown for species selection
+
+    // Mouse click for starting the walk
+    void mousePressed(int x, int y, int button);
+
 
 };

@@ -5,17 +5,6 @@
 #include <unordered_set>
 #include <vector>
 
-std::vector<ofColor> availableColors = {
-    ofColor(255, 0, 0),    // Red
-    ofColor(0, 255, 0),    // Green
-    ofColor(0, 0, 255),    // Blue
-    ofColor(255, 255, 0),  // Yellow
-    ofColor(255, 165, 0),  // Orange
-    ofColor(128, 0, 128),  // Purple
-    ofColor(0, 255, 255),  // Cyan
-    ofColor(255, 192, 203)  // Pink
-};
-
 
 // Function to count unique landuse categories
 int countUniqueLanduseCategories(const std::vector<std::string>& landuseCategories) {
@@ -103,17 +92,14 @@ void ofApp::setup() {
         ofLogError("JSON Load Error") << "JSON file could not be loaded from " + jsonFilePath;
     }
 
-    rotationSpeed = 0.0005; // Slow down rotation
-    rotationAngle = 0.0;
     sphereSize = 2;
-    zoomFactor = 1.0;
-    moveSpeed = 0.5f;  // Slow down the movement speed for more control
+    // moveSpeed = 0.5f;  // Slow down the movement speed for more control
     ofSetFrameRate(60);
     ofBackground(0, 0, 0); // Set background color to black
 
     // Set up the camera to start closer to the point cloud
-    cam.setDistance(100); // Adjust this value to set the initial distance
-    cam.setPosition(0, 0, 100); // Set an initial position
+    cam.setDistance(20); // Adjust this value to set the initial distance
+    cam.setPosition(0, 0, 50); // Set an initial position
     cam.lookAt(ofVec3f(0, 0, 0), ofVec3f(0, 1, 0)); // Look at the center
     // cam.disableMouseInput();
 
@@ -124,7 +110,7 @@ void ofApp::setup() {
     localWalkDistanceThreshold = 2.0f; // Adjust this value as needed
 
     targetPosition = currentPosition;
-    transitionSpeed = 0.05f; // Adjust this value to control the speed of movement
+    transitionSpeed = 0.02f; // Adjust this value to control the speed of movement
 
     // Sliders
     gui = new ofxDatGui(ofxDatGuiAnchor::TOP_RIGHT);
@@ -154,28 +140,34 @@ void ofApp::setup() {
     // instructionText = "Use WASD to rotate the point cloud";
 
     // Font loading
-    font.load("verdana.ttf", 20);
-
-    rotationX = 0;
-    rotationY = 0;
-    rotateLeft = rotateRight = rotateUp = rotateDown = false;
-
-    soundPlayer.setMultiPlay(true);  // Allows overlapping sound if accessed quickly
-    soundPlayer.setLoop(false);  
+    font.load("verdana.ttf", 10);
 
     // Initialize previousColors with the same size as points
     previousColors.resize(points.size(), ofColor(0, 0, 0, 0)); // Initialize with transparent black
 
     // Add a dropdown for color selection
+    colorMode = "Landuse";
     auto colorModeDropdown = gui->addDropdown("Color Mode", {"Landuse", "Time"});
     colorModeDropdown->onDropdownEvent(this, &ofApp::onDropdownEvent);
 
     // Add a slider for distance threshold
     distanceThreshold = 10.0f; // Set an initial value for the distance threshold
-
-    // Create a slider for distance threshold
-    distanceThresholdSlider = gui->addSlider("Distance Threshold", 1, 25, distanceThreshold);
+    distanceThresholdSlider = gui->addSlider("Distance Threshold", 1, 50, distanceThreshold);
     distanceThresholdSlider->onSliderEvent(this, &ofApp::onSliderEvent); // Attach event handler
+
+    // Initialize the bias category dropdown
+    std::unordered_set<std::string> uniqueLanduseCategories(landuseCategories.begin(), landuseCategories.end());
+    std::vector<std::string> landuseOptions(uniqueLanduseCategories.begin(), uniqueLanduseCategories.end());
+
+
+    // Add the bias dropdown directly to the GUI
+    biasDropdown = gui->addDropdown("Bias Towards", landuseOptions); // Add dropdown to the GUI
+    biasDropdown->setPosition(10, 10); // Set position of the dropdown
+    biasDropdown->onDropdownEvent(this, &ofApp::onDropdownEvent); // Attach event handler
+
+    // Set default bias category
+    biasCategory = "commercial"; // Default bias category
+
 }
 
 //--------------------------------------------------------------
@@ -186,44 +178,42 @@ void ofApp::update() {
     currentPosition = currentPosition.getInterpolated(targetPosition, transitionSpeed);
 
     // Only choose a new target when we're close to the current target
-    if (currentPosition.distance(targetPosition) < 0.1) {
+    if (currentPosition.distance(targetPosition) < 0.001) {
         // Find next node based on distance threshold
         vector<int> nearbyNodes; // Vector to store nearby node indices
+        vector<int> biasedNodes; // Vector to store nodes that match the bias category
+
+        // Check if the bias category is valid
+        bool isBiasCategoryValid = std::find(landuseCategories.begin(), landuseCategories.end(), biasCategory) != landuseCategories.end();
+
+
         for (int i = 0; i < points.size(); ++i) {
             if (i != currentNodeIndex) {
                 float dist = currentPosition.distance(points[i]);
                 if (dist < localWalkDistanceThreshold) { // Check if within the distance threshold
                     nearbyNodes.push_back(i); // Add to nearby nodes
+
+                    // Check if the landuse category matches the bias category only if it's valid
+                    if (isBiasCategoryValid && landuseCategories[i] == biasCategory) {
+                        biasedNodes.push_back(i); // Add to biased nodes
+                    }
                 }
             }
         }
 
         // If there are nearby nodes, randomly select one
         if (!nearbyNodes.empty()) {
-            currentNodeIndex = nearbyNodes[ofRandom(nearbyNodes.size())]; // Select a random nearby node
-            targetPosition = points[currentNodeIndex]; // Set the new target position
+            int nextNodeIndex;
 
-            // Create a new sound player for the current node
-            ofSoundPlayer newSoundPlayer;
-            if (newSoundPlayer.load(paths[currentNodeIndex])) {
-                newSoundPlayer.setMultiPlay(true); // Allows overlapping sound
-                newSoundPlayer.setLoop(false); // Set to loop if needed
-                newSoundPlayer.setVolume(1.0); // Set volume to maximum
-                newSoundPlayer.play(); // Play the sound
-                soundPlayers.push_back(newSoundPlayer); // Store the sound player in the vector
+            // If biased nodes are available, choose one randomly
+            if (!biasedNodes.empty()) {
+                nextNodeIndex = biasedNodes[ofRandom(biasedNodes.size())];
             } else {
-                ofLogError("Audio Load Error") << "Failed to load audio file: " << paths[currentNodeIndex];
+                nextNodeIndex = nearbyNodes[ofRandom(nearbyNodes.size())];
             }
-        }
-    }
 
-    
-    // Optionally, you can check for finished sounds and remove them from the vector
-    for (auto it = soundPlayers.begin(); it != soundPlayers.end(); ) {
-        if (!it->isPlaying()) {
-            it = soundPlayers.erase(it); // Remove finished sounds
-        } else {
-            ++it; // Move to the next sound
+            currentNodeIndex = nextNodeIndex; // Select the next node
+            targetPosition = points[currentNodeIndex]; // Set the new target position
         }
     }
 
@@ -241,8 +231,8 @@ void ofApp::draw() {
     cam.begin();
     
     ofPushMatrix();
-    ofRotateXDeg(rotationX);
-    ofRotateYDeg(rotationY);
+    // ofRotateXDeg(rotationX);
+    // ofRotateYDeg(rotationY);
 
     // In the draw function, modify the point drawing logic
     int maxLanduseCategories = countUniqueLanduseCategories(landuseCategories); // Get the count of unique categories
@@ -281,7 +271,7 @@ void ofApp::draw() {
         previousColors[i] = currentColor;
     }
     
-    glPointSize(sphereSize * ofGetWidth() / 500.0); // Point size based on screen width
+    glPointSize(sphereSize * ofGetWidth() / 400.0); // Point size based on screen width
     pointCloud.draw();
 
     // Draw the path of the random walk
@@ -299,7 +289,7 @@ void ofApp::draw() {
     // Draw connections from current node to nearby nodes
     ofSetColor(191, 189, 217, 50); // Purple for connections
     for (size_t i = 0; i < points.size(); ++i) {
-        if (i != currentNodeIndex && currentPosition.distance(points[i]) < 10.0) {
+        if (i != currentNodeIndex && currentPosition.distance(points[i]) < 1.5*distanceThreshold) {
             ofDrawLine(currentPosition, points[i]);
         }
     }
@@ -338,7 +328,6 @@ void ofApp::draw() {
 void ofApp::onSliderEvent(ofxDatGuiSliderEvent e) {
     if (e.target == distanceThresholdSlider) {
         distanceThreshold = e.value; // Update the distance threshold
-        ofLog() << "Distance Threshold updated to: " << distanceThreshold; // Log for debugging
     }
 }
 
@@ -354,7 +343,13 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
 
 //--------------------------------------------------------------
 void ofApp::onDropdownEvent(ofxDatGuiDropdownEvent e) {
-    colorMode = e.target->getLabel(); // Store the selected color mode
+    if (e.target == colorModeDropdown) {
+        colorMode = e.target->getLabel(); // Store the selected color mode
+        ofLog() << "Color mode set to: " << colorMode; // Log for debugging
+    } else if (e.target == biasDropdown) {
+        biasCategory = e.target->getLabel(); // Update the bias category based on selection
+        ofLog() << "Bias category set to: " << biasCategory; // Log for debugging
+    }
 }
 
 //--------------------------------------------------------------
@@ -363,6 +358,27 @@ void ofApp::keyPressed(int key) {
     if (key == 'd') rotateRight = true;
     if (key == 'w') rotateUp = true;
     if (key == 's') rotateDown = true;
+
+    // Check if the 'R' key is pressed
+    if (key == 'r') {
+        // Randomly select a new node from the entire point cloud
+        if (!points.empty()) {
+            currentNodeIndex = ofRandom(points.size()); // Randomly select an index from the points vector
+            currentPosition = points[currentNodeIndex]; // Update the current position
+
+            // Initialize or reset random walk variables
+            visitedNodes.clear(); // Clear previously visited nodes
+            visitedNodes.push_back(currentNodeIndex); // Mark the starting node as visited
+
+            // Optionally, reset other random walk parameters if needed
+            nextNodeDistanceProb = 0.5f; // Example: set a default probability
+            stochasticityProb = 0.5f; // Example: set a default stochasticity probability
+
+            ofLog() << "Starting walk from point: " << currentPosition; // Log for debugging
+        } else {
+            ofLog() << "No points available to start the walk."; // Log if no points are found
+        }
+    }
 }
 
 //--------------------------------------------------------------
@@ -371,4 +387,54 @@ void ofApp::keyReleased(int key) {
     if (key == 'd') rotateRight = false;
     if (key == 'w') rotateUp = false;
     if (key == 's') rotateDown = false;
+}
+
+//--------------------------------------------------------------
+//--------------------------------------------------------------
+void ofApp::mousePressed(int x, int y, int button) {
+    // Check if the SHIFT key is pressed
+    if (ofGetKeyPressed(OF_KEY_SHIFT)) {
+        // Convert mouse coordinates to world coordinates
+        ofVec3f mousePos = cam.screenToWorld(ofVec3f(x, y, 0));
+
+        // Find the closest point to the mouse click
+        float minDistance = std::numeric_limits<float>::max();
+        int closestPointIndex = -1;
+
+        for (size_t i = 0; i < points.size(); ++i) {
+            float distance = mousePos.distance(points[i]);
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestPointIndex = i;
+            }
+        }
+
+        // If the closest point is within a certain threshold, randomly select a new node
+        if (closestPointIndex != -1 && minDistance < 5.0f) { // Adjust the threshold as needed
+            // Create a vector of nearby nodes
+            std::vector<int> nearbyNodes;
+
+            for (size_t i = 0; i < points.size(); ++i) {
+                if (i != closestPointIndex && currentPosition.distance(points[i]) < localWalkDistanceThreshold) {
+                    nearbyNodes.push_back(i); // Add to nearby nodes
+                }
+            }
+
+            // Randomly select a new node from nearby nodes
+            if (!nearbyNodes.empty()) {
+                currentNodeIndex = nearbyNodes[ofRandom(nearbyNodes.size())]; // Randomly select a nearby node
+                currentPosition = points[currentNodeIndex]; // Update the current position
+
+                // Initialize or reset random walk variables
+                visitedNodes.clear(); // Clear previously visited nodes
+                visitedNodes.push_back(currentNodeIndex); // Mark the starting node as visited
+
+                // Optionally, reset other random walk parameters if needed
+                nextNodeDistanceProb = 0.5f; // Example: set a default probability
+                stochasticityProb = 0.5f; // Example: set a default stochasticity probability
+
+                ofLog() << "Starting walk from point: " << currentPosition; // Log for debugging
+            }
+        }
+    }
 }
