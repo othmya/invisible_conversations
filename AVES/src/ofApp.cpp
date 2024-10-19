@@ -12,18 +12,84 @@ int countUniqueLanduseCategories(const std::vector<std::string>& landuseCategori
     return uniqueCategories.size();
 }
 
-// Function to generate color for landuse based on index
-ofColor generateColorForLanduse(int index, int maxCategories) {
-    // Generate a color based on the index and the number of unique categories
-    float hue = ofMap(index, 0, maxCategories - 1, 0, 255); // Map index to hue
-    return ofColor::fromHsb(hue, 255, 255); // HSB color space
+void printUniqueLanduseCategories(const std::vector<std::string>& landuseCategories) {
+    std::unordered_set<std::string> uniqueCategories(landuseCategories.begin(), landuseCategories.end());
+    ofLog() << "Unique Land Use Categories:";
+    for (const auto& category : uniqueCategories) {
+        ofLog() << category; // Print each unique category
+    }
+}
+
+ofColor generateColorForLanduse(const std::string& landuse) {
+    // Define colors for different categories
+    if (landuse == "forest" || landuse == "greenfield" || landuse == "orchard" || 
+        landuse == "meadow" || landuse == "residential" || landuse == "village_green" || 
+        landuse == "recreation_ground" || landuse == "greenery" || landuse == "farmland" || 
+        landuse == "animal_enclosure" || landuse == "apiary" || landuse == "allotments" || 
+        landuse == "greenhouse_horticulture" || landuse == "vineyard") {
+        return ofColor(34, 139, 34); // Forest Green for green spaces
+    } else if (landuse == "commercial" || landuse == "industrial" || landuse == "brownfield" || 
+               landuse == "construction" || landuse == "cemetery" || landuse == "railway" || 
+               landuse == "military" || landuse == "retail" || landuse == "landfill") {
+        return ofColor(128, 128, 128); // Gray for gray spaces
+    } else if (landuse == "reservoir" || landuse == "basin" || landuse == "quarry") {
+        return ofColor(210, 180, 140); // Tan for mineral spaces
+    } else if (landuse == "agricultural") {
+        return ofColor(255, 255, 0); // Yellow for agricultural
+    } else if (landuse == "wetland") {
+        return ofColor(0, 255, 255); // Cyan for wetland
+    } else if (landuse == "desert") {
+        return ofColor(210, 180, 140); // Tan for desert
+    }
+    // Default to black if category not found
+    return ofColor(255, 255, 255, 50);
 }
 
 ofColor generateColorForTime(int timeValue) {
-    // Map timeValue (HHMM) to a color
-    float normalizedTime = ofMap(timeValue, 0, 2359, 0, 1); // Normalize to [0, 1]
-    return ofColor::fromHsb(normalizedTime * 255, 255, 255); // HSB color space
+    if (timeValue >= 600 && timeValue <= 1000) {
+        return ofColor(255, 223, 186); // Early Morning (Light Orange)
+    } else if (timeValue >= 1001 && timeValue <= 1200) {
+        return ofColor(255, 255, 0); // Morning (Yellow)
+    } else if (timeValue >= 1201 && timeValue <= 1800) {
+        return ofColor(255, 165, 0); // Evening (Orange)
+    } else if (timeValue >= 1801 && timeValue <= 2400) {
+        return ofColor(0, 0, 255); // Night (Blue)
+    } else if (timeValue >= 2401 || timeValue <= 559) {
+        return ofColor(75, 0, 130); // Midnight (Indigo)
+    }
+    return ofColor(255, 255, 255, 50); // Default to black if time value is invalid
 }
+
+// Define new land use categories
+std::unordered_map<std::string, std::string> landuseCategoryMap = {
+    {"forest", "leafy"}, {"greenfield", "leafy"}, {"orchard", "leafy"},
+    {"meadow", "leafy"}, {"residential", "leafy"}, {"village_green", "leafy"},
+    {"recreation_ground", "leafy"}, {"greenery", "leafy"}, {"farmland", "leafy"},
+    {"animal_enclosure", "leafy"}, {"apiary", "leafy"}, {"allotments", "leafy"},
+    {"greenhouse_horticulture", "leafy"}, {"vineyard", "leafy"},
+    {"commercial", "unexplored"}, {"industrial", "unexplored"}, {"brownfield", "unexplored"},
+    {"construction", "unexplored"}, {"cemetery", "unexplored"}, {"railway", "unexplored"},
+    {"military", "unexplored"}, {"retail", "unexplored"}, {"landfill", "unexplored"},
+    {"reservoir", "water"}, {"basin", "water"}, {"quarry", "mineral"},
+    {"agricultural", "leafy"}, {"wetland", "water"}, {"desert", "mineral"}
+};
+
+// Define new time categories
+std::unordered_map<std::string, std::string> timeCategoryMap = {
+    {"early morning", "early morning"}, {"morning", "morning"},
+    {"evening", "evening"}, {"night", "night"}, {"midnight", "midnight"}
+};
+
+// Coloring by species
+std::unordered_map<std::string, ofColor> speciesColorMap; // Map to store species and their corresponding colors
+
+// In the setup function, after loading species names
+std::unordered_set<std::string> uniqueSpecies; // Set to store unique species
+
+// Create a vector for the new bias options
+std::vector<std::string> biasOptions;
+
+
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -56,17 +122,10 @@ void ofApp::setup() {
                     std::string remark = json[i].isMember("remark") ? json[i]["remark"].asString() : "";
                     remarks.push_back(remark);
 
-                    pointIntersected.push_back(false);
 
                     // Extract and store the landuse category
                     std::string landuse = json[i].isMember("landuse") ? json[i]["landuse"].asString() : "";
                     landuseCategories.push_back(landuse);
-
-                    // // Assign a color if this landuse category is new
-                    // if (landuseColorMap.find(landuse) == landuseColorMap.end()) {
-                    //     ofColor color = generateColor(landuseColorMap.size());
-                    //     landuseColorMap[landuse] = color;
-                    // }
 
                     // Extract and store the time variable
                     std::string timeStr = json[i].isMember("time") ? json[i]["time"].asString() : "";
@@ -92,46 +151,57 @@ void ofApp::setup() {
         ofLogError("JSON Load Error") << "JSON file could not be loaded from " + jsonFilePath;
     }
 
-    sphereSize = 2;
+    sphereSize = 3;
     // moveSpeed = 0.5f;  // Slow down the movement speed for more control
     ofSetFrameRate(60);
     ofBackground(0, 0, 0); // Set background color to black
 
     // Set up the camera to start closer to the point cloud
-    cam.setDistance(20); // Adjust this value to set the initial distance
-    cam.setPosition(0, 0, 50); // Set an initial position
+    cameraDistance = 30;
+    cam.setDistance(cameraDistance); // Adjust this value to set the initial distance
+    cam.setPosition(0, 0, cameraDistance); // Set an initial position
     cam.lookAt(ofVec3f(0, 0, 0), ofVec3f(0, 1, 0)); // Look at the center
-    // cam.disableMouseInput();
+    // Adjust the near and far clipping planes
+    cam.setNearClip(0.1f); // Set the near clipping plane to 0.1 units
+    cam.setFarClip(1000.0f); // Set the far clipping plane to 1000 units
+
+    // Set up the GUI
+    gui = new ofxDatGui(ofxDatGuiAnchor::TOP_RIGHT);
+    gui->setTheme(new ofxDatGuiThemeSmoke());
+    gui->setWidth(800); // Set the desired width for the GUI
+    gui->onSliderEvent(this, &ofApp::onSliderEvent);
+    gui->onButtonEvent(this, &ofApp::onButtonEvent);
 
 
     currentNodeIndex = ofRandom(points.size());
     currentPosition = points[currentNodeIndex];
-    nextNodeDistanceProb = 0.7; // 70% chance of choosing a closer node
-    localWalkDistanceThreshold = 2.0f; // Adjust this value as needed
-
     targetPosition = currentPosition;
+
+    // Add a slider for local walk distance threshold
+    localWalkDistanceThreshold = 8.0f; // Set an initial value for the local walk distance threshold
+    localWalkDistanceThresholdSlider = gui->addSlider("Local Walk Distance Threshold", 2, 50, localWalkDistanceThreshold);
+    localWalkDistanceThresholdSlider->onSliderEvent(this, &ofApp::onSliderEvent); // Attach event handler
+
     transitionSpeed = 0.02f; // Adjust this value to control the speed of movement
+    transitionSpeedSlider = gui->addSlider("Transition Speed", 0.01f, 1.0f, transitionSpeed);
+    transitionSpeedSlider->onSliderEvent(this, &ofApp::onSliderEvent); // Attach event handler
 
-    // Sliders
-    gui = new ofxDatGui(ofxDatGuiAnchor::TOP_RIGHT);
-    
-    nextNodeDistanceSlider = gui->addSlider("Next Node Distance", 0, 1, nextNodeDistanceProb);
     resetZoomButton = gui->addButton("Reset Zoom");
+    resetZoomButton->setWidth(500);
     
-    gui->onSliderEvent(this, &ofApp::onSliderEvent);
-    gui->onButtonEvent(this, &ofApp::onButtonEvent);
-    
+    // Add a button for tracking the playhead
+    auto trackPlayheadButton = gui->addButton("Track Playhead");
+    trackPlayheadButton->onButtonEvent(this, &ofApp::onButtonEvent); // Attach event handler
+    trackPlayhead = false;
+    cameraAngle = 0.0f;
+
     gui->setAutoDraw(false);
+    
 
-
-    // Customize the slider and button
-    nextNodeDistanceSlider->setWidth(300, 0.3);
-    resetZoomButton->setWidth(300);
-    nextNodeDistanceSlider->setLabelAlignment(ofxDatGuiAlignment::LEFT);
 
 
     // Set the GUI theme to improve visibility
-    gui->setTheme(new ofxDatGuiThemeSmoke());
+    gui->setTheme(new ofxDatGuiThemeCharcoal());
 
     // Adjust the position of the GUI
     gui->setPosition(ofGetWidth() - 320, 20);
@@ -145,28 +215,81 @@ void ofApp::setup() {
     // Initialize previousColors with the same size as points
     previousColors.resize(points.size(), ofColor(0, 0, 0, 0)); // Initialize with transparent black
 
-    // Add a dropdown for color selection
-    colorMode = "Landuse";
-    auto colorModeDropdown = gui->addDropdown("Color Mode", {"Landuse", "Time"});
-    colorModeDropdown->onDropdownEvent(this, &ofApp::onDropdownEvent);
+
+
 
     // Add a slider for distance threshold
-    distanceThreshold = 10.0f; // Set an initial value for the distance threshold
-    distanceThresholdSlider = gui->addSlider("Distance Threshold", 1, 50, distanceThreshold);
+    distanceThreshold = 5.0f; // Set an initial value for the distance threshold
+    distanceThresholdSlider = gui->addSlider("Distance Threshold", 2, 22, distanceThreshold);
     distanceThresholdSlider->onSliderEvent(this, &ofApp::onSliderEvent); // Attach event handler
 
-    // Initialize the bias category dropdown
-    std::unordered_set<std::string> uniqueLanduseCategories(landuseCategories.begin(), landuseCategories.end());
-    std::vector<std::string> landuseOptions(uniqueLanduseCategories.begin(), uniqueLanduseCategories.end());
+    landuseCategoryMap = {
+        {"forest", "leafy"}, {"greenfield", "leafy"}, {"orchard", "leafy"},
+        {"meadow", "leafy"}, {"residential", "leafy"}, {"village_green", "leafy"},
+        {"recreation_ground", "leafy"}, {"greenery", "leafy"}, {"farmland", "leafy"},
+        {"animal_enclosure", "leafy"}, {"apiary", "leafy"}, {"allotments", "leafy"},
+        {"greenhouse_horticulture", "leafy"}, {"vineyard", "leafy"},
+        {"commercial", "unexplored"}, {"industrial", "unexplored"}, {"brownfield", "unexplored"},
+        {"construction", "unexplored"}, {"cemetery", "unexplored"}, {"railway", "unexplored"},
+        {"military", "unexplored"}, {"retail", "unexplored"}, {"landfill", "unexplored"},
+        {"reservoir", "water"}, {"basin", "water"}, {"quarry", "mineral"},
+        {"agricultural", "leafy"}, {"wetland", "water"}, {"desert", "mineral"}
+    };
+
+    timeCategoryMap = {
+        {"early morning", "early morning"}, {"morning", "morning"},
+        {"evening", "evening"}, {"night", "night"}, {"midnight", "midnight"}
+    };
 
 
-    // Add the bias dropdown directly to the GUI
-    biasDropdown = gui->addDropdown("Bias Towards", landuseOptions); // Add dropdown to the GUI
+    // Clear previous options
+    biasOptions.clear();
+
+    // Use a set to collect unique bias options
+    std::unordered_set<std::string> uniqueBiasOptions;
+
+    // Add land use categories to the bias options
+    for (const auto& pair : landuseCategoryMap) {
+        uniqueBiasOptions.insert(pair.second); // Add the broader category (e.g., "leafy", "mineral", etc.)
+    }
+
+    // Add time categories to the bias options
+    for (const auto& pair : timeCategoryMap) {
+        uniqueBiasOptions.insert(pair.first); // Add the time category (e.g., "early morning", "morning", etc.)
+    }
+
+    // Populate the biasOptions vector with unique options
+    biasOptions.assign(uniqueBiasOptions.begin(), uniqueBiasOptions.end());
+
+
+    biasDropdown = gui->addDropdown("Bias Towards", biasOptions); // Add dropdown to the GUI
     biasDropdown->setPosition(10, 10); // Set position of the dropdown
     biasDropdown->onDropdownEvent(this, &ofApp::onDropdownEvent); // Attach event handler
 
     // Set default bias category
-    biasCategory = "commercial"; // Default bias category
+    biasCategory = "leafy"; // Default bias category
+
+ 
+
+    for (const auto& species : speciesNames) {
+        uniqueSpecies.insert(species); // Add species to the set
+    }
+
+    // Generate random colors for each unique species
+    for (const auto& species : uniqueSpecies) {
+        float hue = ofRandom(0, 255); // Random hue
+        float saturation = ofRandom(100, 255); // Random saturation
+        float brightness = ofRandom(100, 255); // Random brightness
+        ofColor color = ofColor::fromHsb(hue, saturation, brightness); // Create color from HSB
+        speciesColorMap[species] = color; // Map species to color
+    }
+    
+
+    // Add a dropdown for color selection
+    colorModeDropdown = gui->addDropdown("Color Mode", {"Landuse", "Time", "Species"});
+    colorModeDropdown->onDropdownEvent(this, &ofApp::onDropdownEvent);
+    colorMode = "Time"; 
+    ofLog() << "Initial color mode: " << colorMode;
 
 }
 
@@ -182,40 +305,103 @@ void ofApp::update() {
         // Find next node based on distance threshold
         vector<int> nearbyNodes; // Vector to store nearby node indices
         vector<int> biasedNodes; // Vector to store nodes that match the bias category
+        std::unordered_map<int, int> categoryCount; // Map to count nodes by category
+
+        // Declare targetNodeIndex
+        int targetNodeIndex = -1; // Initialize to an invalid index
 
         // Check if the bias category is valid
-        bool isBiasCategoryValid = std::find(landuseCategories.begin(), landuseCategories.end(), biasCategory) != landuseCategories.end();
+        bool isBiasCategoryValid = (landuseCategoryMap.find(biasCategory) != landuseCategoryMap.end()) ||
+                                   (timeCategoryMap.find(biasCategory) != timeCategoryMap.end());
 
+        // Define a smaller radius for stricter clustering check
+        float smallerRadius = 2.0f; // Hardcoded smaller radius
+        float currentRadius = localWalkDistanceThreshold; // Start with the original radius
 
+        // First pass: Check for nearby nodes within the current radius
         for (int i = 0; i < points.size(); ++i) {
             if (i != currentNodeIndex) {
                 float dist = currentPosition.distance(points[i]);
-                if (dist < localWalkDistanceThreshold) { // Check if within the distance threshold
+                if (dist < currentRadius) { // Check if within the distance threshold
                     nearbyNodes.push_back(i); // Add to nearby nodes
 
                     // Check if the landuse category matches the bias category only if it's valid
-                    if (isBiasCategoryValid && landuseCategories[i] == biasCategory) {
+                    std::string landuseCategory = landuseCategories[i];
+                    std::string broaderCategory = landuseCategoryMap[landuseCategory]; // Get the broader category
+
+                    // Check if the current point's land use matches the bias category
+                    if (isBiasCategoryValid && (broaderCategory == biasCategory)) {
                         biasedNodes.push_back(i); // Add to biased nodes
+                        categoryCount[i]++; // Increment the count for this node
                     }
                 }
             }
         }
 
-        // If there are nearby nodes, randomly select one
-        if (!nearbyNodes.empty()) {
-            int nextNodeIndex;
+        // Check if more than 80% of nearby nodes are from the same category
+        if (!biasedNodes.empty() && nearbyNodes.size() > 0) {
+            float percentage = (static_cast<float>(biasedNodes.size()) / nearbyNodes.size()) * 100.0f;
+            if (percentage > 80.0f) {
+                currentRadius = smallerRadius; // Reduce the radius to focus on the area
+            }
+        }
 
-            // If biased nodes are available, choose one randomly
-            if (!biasedNodes.empty()) {
-                nextNodeIndex = biasedNodes[ofRandom(biasedNodes.size())];
-            } else {
-                nextNodeIndex = nearbyNodes[ofRandom(nearbyNodes.size())];
+        // Second pass: Check for clustering within the smaller radius
+        if (!biasedNodes.empty()) {
+            std::unordered_map<int, int> clusteringCount; // Map to count clustering of biased nodes
+            for (const auto& node : biasedNodes) {
+                for (int j = 0; j < points.size(); ++j) {
+                    if (j != currentNodeIndex) {
+                        float dist = points[node].distance(points[j]);
+                        if (dist < currentRadius) { // Check if within the current distance threshold
+                            clusteringCount[node]++; // Increment the clustering count for this node
+                        }
+                    }
+                }
             }
 
-            currentNodeIndex = nextNodeIndex; // Select the next node
-            targetPosition = points[currentNodeIndex]; // Set the new target position
+            // Determine the target position based on the highest clustering count
+            int maxCount = 0;
+            for (const auto& node : biasedNodes) {
+                if (clusteringCount[node] > maxCount) {
+                    maxCount = clusteringCount[node];
+                    targetNodeIndex = node; // Update target node index
+                }
+            }
+
+            if (targetNodeIndex != -1) {
+                targetPosition = points[targetNodeIndex]; // Set the new target position to the node with the highest clustering
+            }
+        } else if (!nearbyNodes.empty()) {
+            targetPosition = points[nearbyNodes[ofRandom(nearbyNodes.size())]]; // Fallback to a random nearby node
         }
+
+        // Update the current node index to the target node index
+        currentNodeIndex = targetNodeIndex; // Select the next node
     }
+
+    // Update the camera position to follow the current position only if tracking is active
+    if (trackPlayhead) {
+        // Increment the angle for smooth panning
+        cameraAngle += 0.001f; // Adjust the speed of the panning effect
+
+        // Calculate the new camera position based on the angle
+        float radius = 2.0f; // Distance from the playhead
+        float camX = currentPosition.x + radius * sin(cameraAngle);
+        float camY = currentPosition.y + radius * cos(cameraAngle);
+        float camZ = currentPosition.z; // Slightly above the playhead
+        cam.setPosition(camX, camY, camZ); // Set the new camera position
+        cam.lookAt(currentPosition); // Make the camera look at the current position
+    } else {
+        // Allow the camera to be controlled by mouse input
+        cam.setPosition(cam.getPosition()); // Maintain the current camera position
+        cam.lookAt(ofVec3f(0, 0, 0)); // Reset the camera look-at point if needed
+    }
+
+    // Adjust sphere size based on camera distance
+    float cameraDistance = cam.getDistance();
+    // sphereSize = ofMap(cameraDistance, 0, 1000, 2, 10); // Map camera distance to sphere size (adjust values as needed)
+
 
     gui->update();
 }
@@ -231,48 +417,47 @@ void ofApp::draw() {
     cam.begin();
     
     ofPushMatrix();
-    // ofRotateXDeg(rotationX);
-    // ofRotateYDeg(rotationY);
 
     // In the draw function, modify the point drawing logic
-    int maxLanduseCategories = countUniqueLanduseCategories(landuseCategories); // Get the count of unique categories
-
-    // Draw the point cloud (only once)
     ofMesh pointCloud;
     pointCloud.setMode(OF_PRIMITIVE_POINTS);
-    // In the draw function, modify the point drawing logic
+
+    // Draw the point cloud (only once)
     for (size_t i = 0; i < points.size(); ++i) {
         pointCloud.addVertex(points[i]);
 
-        // Set the default color to black
-        ofColor currentColor = ofColor(0, 0, 0); // Default to black
+        // Calculate the distance from the current position
+        float dist = currentPosition.distance(points[i]);
 
-        // Check if the point is nearby using the distance threshold
-        if (currentPosition.distance(points[i]) < distanceThreshold) {
-            // Color based on the selected mode
-            if (colorMode == "Landuse") {
-                // Generate color based on the index of the landuse category
-            int landuseIndex = std::distance(landuseCategories.begin(), std::find(landuseCategories.begin(), landuseCategories.end(), landuseCategories[i]));
-            currentColor = generateColorForLanduse(landuseIndex, maxLanduseCategories); // Pass the max categories
-            } else if (colorMode == "Time") {
-                // Get the color based on time
-                if (i < timeValues.size()) {
-                    currentColor = generateColorForTime(timeValues[i]);
-                }
-            }
-
+        // Determine the alpha value based on the distance
+        float alpha;
+        if (dist <= distanceThreshold) {
+            alpha = 255; // Full opacity for points within the threshold
+        } else if (dist >= 2.0 * distanceThreshold) {
+            alpha = 0; // Fully transparent for points 5 times further away
+        } else {
+            // Interpolate alpha based on distance
+            alpha = ofMap(dist, distanceThreshold, 2.0 * distanceThreshold, 255, 0, true);
         }
 
-        // Interpolate between the previous color and the current color
-        ofColor interpolatedColor = previousColors[i].getLerped(currentColor, 0.1); // 0.1 is the interpolation factor
-        pointCloud.addColor(interpolatedColor);
-
-        // Update the previous color to the current color for the next frame
-        previousColors[i] = currentColor;
+        // Set the color based on the selected color mode
+        ofColor currentColor;
+        if (colorMode == "Landuse") {
+            currentColor = generateColorForLanduse(landuseCategories[i]); // Get the color based on landuse
+        } else if (colorMode == "Time") {
+            currentColor = generateColorForTime(timeValues[i]); // Get the color based on time
+        } else if (colorMode == "Species") {
+            currentColor = speciesColorMap[speciesNames[i]]; // Get the color based on species
+        }
+        currentColor.a = alpha; // Set the alpha value
+        pointCloud.addColor(currentColor);
     }
-    
-    glPointSize(sphereSize * ofGetWidth() / 400.0); // Point size based on screen width
+
+    float new_sphereSize = sphereSize * ofGetWidth() / 1000.0;
+    glPointSize(new_sphereSize); // Point size based on screen width
     pointCloud.draw();
+
+    trailStartTime = ofGetElapsedTimef();
 
     // Draw the path of the random walk
     if (ofGetElapsedTimef() - trailStartTime < 15.0f) {
@@ -287,9 +472,9 @@ void ofApp::draw() {
     }
 
     // Draw connections from current node to nearby nodes
-    ofSetColor(191, 189, 217, 50); // Purple for connections
+    ofSetColor(191, 189, 217, trackPlayhead ? 10 : 30); // Purple for connections, alpha based on trackPlayhead
     for (size_t i = 0; i < points.size(); ++i) {
-        if (i != currentNodeIndex && currentPosition.distance(points[i]) < 1.5*distanceThreshold) {
+        if (i != currentNodeIndex && currentPosition.distance(points[i]) < 3.0 * distanceThreshold) {
             ofDrawLine(currentPosition, points[i]);
         }
     }
@@ -328,6 +513,10 @@ void ofApp::draw() {
 void ofApp::onSliderEvent(ofxDatGuiSliderEvent e) {
     if (e.target == distanceThresholdSlider) {
         distanceThreshold = e.value; // Update the distance threshold
+    } else if (e.target == transitionSpeedSlider) {
+        transitionSpeed = e.value; // Update the transition speed
+    } else if (e.target == localWalkDistanceThresholdSlider) {
+        localWalkDistanceThreshold = e.value; // Update the local walk distance threshold
     }
 }
 
@@ -336,28 +525,28 @@ void ofApp::onSliderEvent(ofxDatGuiSliderEvent e) {
 void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
     if (e.target == resetZoomButton) {
         cam.reset();
-        cam.setDistance(100); // Set to your desired default distance
+        cam.setDistance(cameraDistance); // Set to your desired default distance
+        trackPlayhead = false; // Reset tracking when zoom is reset
+    } else if (e.target->getLabel() == "Track Playhead") {
+        trackPlayhead = true; // Activate tracking when the button is pressed
     }
 }
 
 
 //--------------------------------------------------------------
 void ofApp::onDropdownEvent(ofxDatGuiDropdownEvent e) {
+    ofLog() << "Dropdown event triggered"; // Log to confirm the event is triggered
     if (e.target == colorModeDropdown) {
         colorMode = e.target->getLabel(); // Store the selected color mode
         ofLog() << "Color mode set to: " << colorMode; // Log for debugging
     } else if (e.target == biasDropdown) {
-        biasCategory = e.target->getLabel(); // Update the bias category based on selection
+        biasCategory = e.target->getLabel(); // Update the bias category based on the selected option
         ofLog() << "Bias category set to: " << biasCategory; // Log for debugging
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
-    if (key == 'a') rotateLeft = true;
-    if (key == 'd') rotateRight = true;
-    if (key == 'w') rotateUp = true;
-    if (key == 's') rotateDown = true;
 
     // Check if the 'R' key is pressed
     if (key == 'r') {
@@ -372,7 +561,6 @@ void ofApp::keyPressed(int key) {
 
             // Optionally, reset other random walk parameters if needed
             nextNodeDistanceProb = 0.5f; // Example: set a default probability
-            stochasticityProb = 0.5f; // Example: set a default stochasticity probability
 
             ofLog() << "Starting walk from point: " << currentPosition; // Log for debugging
         } else {
@@ -383,58 +571,20 @@ void ofApp::keyPressed(int key) {
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key) {
-    if (key == 'a') rotateLeft = false;
-    if (key == 'd') rotateRight = false;
-    if (key == 'w') rotateUp = false;
-    if (key == 's') rotateDown = false;
 }
 
-//--------------------------------------------------------------
-//--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button) {
-    // Check if the SHIFT key is pressed
-    if (ofGetKeyPressed(OF_KEY_SHIFT)) {
-        // Convert mouse coordinates to world coordinates
-        ofVec3f mousePos = cam.screenToWorld(ofVec3f(x, y, 0));
 
-        // Find the closest point to the mouse click
-        float minDistance = std::numeric_limits<float>::max();
-        int closestPointIndex = -1;
 
-        for (size_t i = 0; i < points.size(); ++i) {
-            float distance = mousePos.distance(points[i]);
-            if (distance < minDistance) {
-                minDistance = distance;
-                closestPointIndex = i;
-            }
-        }
 
-        // If the closest point is within a certain threshold, randomly select a new node
-        if (closestPointIndex != -1 && minDistance < 5.0f) { // Adjust the threshold as needed
-            // Create a vector of nearby nodes
-            std::vector<int> nearbyNodes;
 
-            for (size_t i = 0; i < points.size(); ++i) {
-                if (i != closestPointIndex && currentPosition.distance(points[i]) < localWalkDistanceThreshold) {
-                    nearbyNodes.push_back(i); // Add to nearby nodes
-                }
-            }
 
-            // Randomly select a new node from nearby nodes
-            if (!nearbyNodes.empty()) {
-                currentNodeIndex = nearbyNodes[ofRandom(nearbyNodes.size())]; // Randomly select a nearby node
-                currentPosition = points[currentNodeIndex]; // Update the current position
 
-                // Initialize or reset random walk variables
-                visitedNodes.clear(); // Clear previously visited nodes
-                visitedNodes.push_back(currentNodeIndex); // Mark the starting node as visited
 
-                // Optionally, reset other random walk parameters if needed
-                nextNodeDistanceProb = 0.5f; // Example: set a default probability
-                stochasticityProb = 0.5f; // Example: set a default stochasticity probability
 
-                ofLog() << "Starting walk from point: " << currentPosition; // Log for debugging
-            }
-        }
-    }
-}
+
+
+
+
+
+
+
