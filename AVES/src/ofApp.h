@@ -19,6 +19,8 @@ public:
     void keyPressed(int key);
     void keyReleased(int key);
     // void mousePressed(int x, int y, int button);
+    void mouseMoved(int x, int y); // Declare mouseMoved function
+
 
     // Camera and movement variables
     ofEasyCam cam;
@@ -107,9 +109,13 @@ public:
     
     
     ofxDatGuiDropdown* colorModeDropdown;
+    ofxDatGuiDropdown* cameraMovementDropdown; // Dropdown for camera movement selection
+    std::string cameraMovement; // To store the current camera movement
 
     // Function to initialize the land use color map
     void initializeLanduseColorMap(const std::vector<std::string>& categories);
     ofColor getColorForLanduse(const std::string& category);
+
+    bool guiVisible; // Variable to track GUI visibility
 
 };
