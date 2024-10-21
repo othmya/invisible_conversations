@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+#include <fstream>
 
 
 // Function to count unique landuse categories
@@ -93,9 +94,9 @@ std::vector<std::string> biasOptions;
 
 //--------------------------------------------------------------
 void ofApp::setup() {
-    std::string jsonFilePath = "/home/oth/Downloads/OpenFrameworks/apps/myApps/AVES/bin/data/output_all_v1.json"; 
+    std::string jsonFilePath = "data/output_all.json"; 
     ofxJSONElement json;
-    bool success = json.open(jsonFilePath);
+    bool success = json.open(ofToDataPath("output_all.json"));
 
     if (success) {
         for (Json::ArrayIndex i = 0; i < json.size(); ++i) {
@@ -175,6 +176,7 @@ void ofApp::setup() {
 
     currentNodeIndex = ofRandom(points.size());
     currentPosition = points[currentNodeIndex];
+    ofLog()<<"currentNodeIndexset "<<currentNodeIndex;
     targetPosition = currentPosition;
 
     // Add a slider for local walk distance threshold
@@ -207,7 +209,7 @@ void ofApp::setup() {
     // instructionText = "Use WASD to rotate the point cloud";
 
     // Font loading
-    font.load("verdana.ttf", 10);
+    font.load("/Users/thalia/Antoine/invisible_conversations/AVES/bin/data/ofxbraitsch/fonts/Verdana.ttf", 10);
 
     // Initialize previousColors with the same size as points
     previousColors.resize(points.size(), ofColor(0, 0, 0, 0)); // Initialize with transparent black
@@ -382,7 +384,9 @@ void ofApp::update() {
         }
 
         // Update the current node index to the target node index
+        ofLog()<<"currentNodeIndexupdate "<<currentNodeIndex;
         currentNodeIndex = targetNodeIndex; // Select the next node
+
     }
 
     if (cameraMovement == "circular") {
@@ -572,7 +576,7 @@ void ofApp::draw() {
         }
         ofEndShape(false);
     }
-
+    // ofLog()<<"currentNodeIndex1 "<<currentNodeIndex;
     // Draw connections from current node to nearby nodes
     ofSetColor(191, 189, 217, trackPlayhead ? 10 : 30); // Purple for connections, alpha based on trackPlayhead
     for (size_t i = 0; i < points.size(); ++i) {
@@ -588,7 +592,9 @@ void ofApp::draw() {
     ofDisableDepthTest();
 
     // Draw species name at the bottom center
-    string speciesName = speciesNames[currentNodeIndex];
+    // ofLog()<<"currentNodeIndex "<<currentNodeIndex;
+    std::string speciesName = speciesNames[currentNodeIndex];
+    // ofLog()<<"speciesName "<<speciesName;
     ofRectangle bounds = font.getStringBoundingBox(speciesName, 0, 0);
     float x = (ofGetWidth() - bounds.width) / 2;
     float y = ofGetHeight() - bounds.height - 20;

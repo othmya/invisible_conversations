@@ -1,0 +1,995 @@
+{
+	"archiveVersion": "1",
+	"classes": {},
+	"objectVersion": "54",
+	"objects": {
+		"035C7413-2B28-4047-9CBF-5DDFD48771B0": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxDatGuiConstants.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/core/ofxDatGuiConstants.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"07A20963-8D5F-4841-84AA-E8F0B6FB9C02": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxSliderGroup.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src/ofxSliderGroup.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"090564C1-A5C4-4867-B2E1-F202EE429987": {
+			"children": [
+				"8A4F4175-F5CD-40A6-B6E4-611059EA4DEB"
+			],
+			"isa": "PBXGroup",
+			"name": "ofxDatGui",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"0B41248A-E5FF-4056-9CB6-7214B0FED1ED": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxDatGuiIntObject.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/core/ofxDatGuiIntObject.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"0BD8487D-6A2C-40C6-832A-87437E9455A7": {
+			"explicitFileType": "sourcecode.cpp.cpp",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxDatGuiComponent.cpp",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/core/ofxDatGuiComponent.cpp",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"10C5556C-237C-48F5-96AB-D316AF84D7F7": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxDatGuiTimeGraph.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/components/ofxDatGuiTimeGraph.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"16271A65-66E4-4468-A34D-E4B812612D7E": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxDatGuiTextInput.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/components/ofxDatGuiTextInput.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"166C1359-D3DD-40A4-9022-DA1BB4973DA8": {
+			"fileRef": "BA34006D-698E-4CB0-80BC-CF61E17DFCC0",
+			"isa": "PBXBuildFile"
+		},
+		"191CD6FA2847E21E0085CBB6": {
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "text.plist.entitlements",
+			"path": "of.entitlements",
+			"sourceTree": "<group>"
+		},
+		"191EF70929D778A400F35F26": {
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "folder",
+			"name": "openFrameworks",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/libs/openFrameworks",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"1977DA23-BC87-48AF-8A76-F468D0739C2D": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxPanel.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src/ofxPanel.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"19B789C429E5AB4A0082E9B8": {
+			"buildActionMask": "2147483647",
+			"files": [],
+			"inputFileListPaths": [],
+			"inputPaths": [],
+			"isa": "PBXShellScriptBuildPhase",
+			"outputFileListPaths": [],
+			"outputPaths": [],
+			"runOnlyForDeploymentPostprocessing": "0",
+			"shellPath": "/bin/sh",
+			"shellScript": "\"$OF_PATH/scripts/osx/xcode_project.sh\"\n",
+			"showEnvVarsInLog": "0"
+		},
+		"1E397C63-8A83-4A9D-B032-66DDDAFF90A4": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxColorPicker.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src/ofxColorPicker.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"1E786E4C-3E31-4952-89C2-CD55A5E1A3D0": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxJSONElement.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxJSON/src/ofxJSONElement.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"2452DB60-C9BE-4954-97CA-C7EF428AE73F": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxButton.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src/ofxButton.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"25869B4E-DE49-441A-A852-2BBED6EEE77B": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxSmartFont.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/libs/ofxSmartFont/ofxSmartFont.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"31292063-4E25-490B-9BD3-C91F5895DDF5": {
+			"explicitFileType": "sourcecode.cpp.cpp",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "jsoncpp.cpp",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxJSON/libs/jsoncpp/src/jsoncpp.cpp",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"34670631-1485-408F-A7AE-5C89D2CD2559": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxToggle.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src/ofxToggle.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"3663EF99-0BD7-49E8-A5F9-59202CD7B73B": {
+			"children": [
+				"B13DF33B-8652-4C62-8378-4050C8ED2530",
+				"A8BBD685-6BC9-429C-B8F8-96B8235B5718",
+				"ADCC16E9-5B68-44B0-AA1E-7AFF8A412CC5",
+				"2452DB60-C9BE-4954-97CA-C7EF428AE73F",
+				"417BC1B8-E911-4B9A-B87E-825C3F6226B4",
+				"1E397C63-8A83-4A9D-B032-66DDDAFF90A4",
+				"7D989E6E-38AC-461D-8A13-165E46DD1D09",
+				"CC693262-1AF8-462B-8042-0FC14A94CD5A",
+				"D0F4F3A3-3060-4011-ADCC-21136AE94832",
+				"A2C13354-797A-4FC9-95EA-1C2631A6C403",
+				"E3643957-5568-40DF-8BD4-FCB3E906F1AE",
+				"896EB834-F0A6-4551-B390-81B3E5954C5E",
+				"82E929E1-2F05-4182-80CB-4272A2ADBC68",
+				"4CDB9141-7395-4F85-917D-FEE5824CDF97",
+				"E86288F0-7337-4136-AC9F-C9702703510C",
+				"1977DA23-BC87-48AF-8A76-F468D0739C2D",
+				"497822B5-BCC1-4AB9-A8DC-3C7917DB4912",
+				"DADBDB22-B946-4E68-82CD-D80C7A601DD4",
+				"A5584746-7CDA-4E39-91E4-095818792C56",
+				"07A20963-8D5F-4841-84AA-E8F0B6FB9C02",
+				"BA276AC7-1E00-419D-B49A-23ECE8D83A1A",
+				"34670631-1485-408F-A7AE-5C89D2CD2559"
+			],
+			"isa": "PBXGroup",
+			"name": "src",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"36B4A88B-9BB1-4BBC-B702-91B0168DB45F": {
+			"explicitFileType": "sourcecode.cpp.cpp",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxSmartFont.cpp",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/libs/ofxSmartFont/ofxSmartFont.cpp",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"372A5A2B-1665-42D1-B939-38658DE988F5": {
+			"fileRef": "82E929E1-2F05-4182-80CB-4272A2ADBC68",
+			"isa": "PBXBuildFile"
+		},
+		"37E05D99-8011-4ADE-A954-DAA82F367F9E": {
+			"fileRef": "0BD8487D-6A2C-40C6-832A-87437E9455A7",
+			"isa": "PBXBuildFile"
+		},
+		"417BC1B8-E911-4B9A-B87E-825C3F6226B4": {
+			"explicitFileType": "sourcecode.cpp.cpp",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxColorPicker.cpp",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src/ofxColorPicker.cpp",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"4314A18A-43F0-4A92-A227-218979F51F20": {
+			"explicitFileType": "sourcecode.cpp.cpp",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxDatGui.cpp",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/ofxDatGui.cpp",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"43EF110E-C3EF-4C72-9718-ED6B849865B6": {
+			"fileRef": "CC693262-1AF8-462B-8042-0FC14A94CD5A",
+			"isa": "PBXBuildFile"
+		},
+		"43FEB5DC-5820-4E17-AFEB-893DCC1EA567": {
+			"fileRef": "A5584746-7CDA-4E39-91E4-095818792C56",
+			"isa": "PBXBuildFile"
+		},
+		"44A4960A-B8B0-4825-B9B7-8E7D1F627D01": {
+			"children": [
+				"36B4A88B-9BB1-4BBC-B702-91B0168DB45F",
+				"25869B4E-DE49-441A-A852-2BBED6EEE77B"
+			],
+			"isa": "PBXGroup",
+			"name": "ofxSmartFont",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"46A80AD6-488F-44A2-8902-B150E85765C1": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxDatGui.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/ofxDatGui.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"4845C233-771B-4C79-A011-E60A285908B5": {
+			"children": [
+				"31292063-4E25-490B-9BD3-C91F5895DDF5"
+			],
+			"isa": "PBXGroup",
+			"name": "src",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"497822B5-BCC1-4AB9-A8DC-3C7917DB4912": {
+			"explicitFileType": "sourcecode.cpp.cpp",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxSlider.cpp",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src/ofxSlider.cpp",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"4CDB9141-7395-4F85-917D-FEE5824CDF97": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxLabel.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src/ofxLabel.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"5904EB5D-E585-4341-A729-3BEA4822C622": {
+			"fileRef": "E86288F0-7337-4136-AC9F-C9702703510C",
+			"isa": "PBXBuildFile"
+		},
+		"5B6174FB-D7B8-4A2D-B83C-43DF17BC6670": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxDatGuiEvents.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/core/ofxDatGuiEvents.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"5C197D51-3F0A-41C6-B1F3-9A0C32E4735A": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "json-forwards.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxJSON/libs/jsoncpp/include/json/json-forwards.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"5F0DBD1B-5A78-4D15-A2B8-7074F73B93F4": {
+			"children": [
+				"75467556-F0A4-4330-9648-446F750768D0",
+				"4845C233-771B-4C79-A011-E60A285908B5"
+			],
+			"isa": "PBXGroup",
+			"name": "jsoncpp",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"65A5EB69-B4DE-443B-9821-5EE10E2C53F8": {
+			"fileRef": "36B4A88B-9BB1-4BBC-B702-91B0168DB45F",
+			"isa": "PBXBuildFile"
+		},
+		"6B140ADB-029C-428E-90D9-8310C4923515": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxDatGuiGroups.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/components/ofxDatGuiGroups.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"75467556-F0A4-4330-9648-446F750768D0": {
+			"children": [
+				"8337A043-E496-4F84-BA1C-BCCBC58B4856"
+			],
+			"isa": "PBXGroup",
+			"name": "include",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"79EC6542-09C4-47F9-BB27-941EB55385C7": {
+			"children": [
+				"3663EF99-0BD7-49E8-A5F9-59202CD7B73B"
+			],
+			"isa": "PBXGroup",
+			"name": "ofxGui",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"7D989E6E-38AC-461D-8A13-165E46DD1D09": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxGui.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src/ofxGui.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"82E929E1-2F05-4182-80CB-4272A2ADBC68": {
+			"explicitFileType": "sourcecode.cpp.cpp",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxLabel.cpp",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src/ofxLabel.cpp",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"8337A043-E496-4F84-BA1C-BCCBC58B4856": {
+			"children": [
+				"5C197D51-3F0A-41C6-B1F3-9A0C32E4735A",
+				"C3213D82-9A1D-4F91-9E37-1994EFA1E623"
+			],
+			"isa": "PBXGroup",
+			"name": "json",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"85A4962C-003E-4C9D-9487-0B975E21F658": {
+			"fileRef": "31292063-4E25-490B-9BD3-C91F5895DDF5",
+			"isa": "PBXBuildFile"
+		},
+		"8665D446-9604-4731-BB28-E417A451AA84": {
+			"fileRef": "497822B5-BCC1-4AB9-A8DC-3C7917DB4912",
+			"isa": "PBXBuildFile"
+		},
+		"8789F9C7-6CA9-49D4-8C09-DAF58981609F": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxDatGui2dPad.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/components/ofxDatGui2dPad.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"890769AE-86BF-4E7D-A10E-14C8E09E18CA": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxDatGuiTheme.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/themes/ofxDatGuiTheme.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"896EB834-F0A6-4551-B390-81B3E5954C5E": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxInputField.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src/ofxInputField.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"8A4F4175-F5CD-40A6-B6E4-611059EA4DEB": {
+			"children": [
+				"D48B843E-CED8-428B-8787-E6E8A3BDD97A",
+				"B4D5055E-07C7-4AA4-AB92-7A666CF9D39E",
+				"D0504F6B-1D83-4902-9ABB-C62FA594C860",
+				"4314A18A-43F0-4A92-A227-218979F51F20",
+				"46A80AD6-488F-44A2-8902-B150E85765C1",
+				"FF0B2C0D-EC57-4606-AD04-7558134CF27F"
+			],
+			"isa": "PBXGroup",
+			"name": "src",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"8E8C5347-5DE0-4874-8914-137D0441359C": {
+			"children": [
+				"5F0DBD1B-5A78-4D15-A2B8-7074F73B93F4"
+			],
+			"isa": "PBXGroup",
+			"name": "libs",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"91175A71-7440-41C8-93BC-9536A4D1538C": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxDatGuiFRM.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/components/ofxDatGuiFRM.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"969C33A2-E6B6-4AAC-8DFC-40A8F5433CCD": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxDatGuiMatrix.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/components/ofxDatGuiMatrix.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"9E93D961-82B3-4728-8B3C-0FC13B328F87": {
+			"fileRef": "E3643957-5568-40DF-8BD4-FCB3E906F1AE",
+			"isa": "PBXBuildFile"
+		},
+		"9F03E37E-C494-43B1-8A38-4E000233068D": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxJSON.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxJSON/src/ofxJSON.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"A2C13354-797A-4FC9-95EA-1C2631A6C403": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxGuiUtils.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src/ofxGuiUtils.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"A5584746-7CDA-4E39-91E4-095818792C56": {
+			"explicitFileType": "sourcecode.cpp.cpp",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxSliderGroup.cpp",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src/ofxSliderGroup.cpp",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"A8BBD685-6BC9-429C-B8F8-96B8235B5718": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxBaseGui.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src/ofxBaseGui.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"AC05F853-B903-431A-A57A-61B1D272A67A": {
+			"fileRef": "417BC1B8-E911-4B9A-B87E-825C3F6226B4",
+			"isa": "PBXBuildFile"
+		},
+		"ADCC16E9-5B68-44B0-AA1E-7AFF8A412CC5": {
+			"explicitFileType": "sourcecode.cpp.cpp",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxButton.cpp",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src/ofxButton.cpp",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"B13DF33B-8652-4C62-8378-4050C8ED2530": {
+			"explicitFileType": "sourcecode.cpp.cpp",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxBaseGui.cpp",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src/ofxBaseGui.cpp",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"B4D5055E-07C7-4AA4-AB92-7A666CF9D39E": {
+			"children": [
+				"0BD8487D-6A2C-40C6-832A-87437E9455A7",
+				"D6A8849B-6C47-4E08-A39C-D65FB9304A40",
+				"035C7413-2B28-4047-9CBF-5DDFD48771B0",
+				"5B6174FB-D7B8-4A2D-B83C-43DF17BC6670",
+				"0B41248A-E5FF-4056-9CB6-7214B0FED1ED"
+			],
+			"isa": "PBXGroup",
+			"name": "core",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"B4E34C0F-DC04-42E1-9120-2C8F4A4DE28A": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxDatGuiControls.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/components/ofxDatGuiControls.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"B8FC3E4C-2C6E-4BBF-A449-FA994CE87D68": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxDatGuiButton.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/components/ofxDatGuiButton.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"BA276AC7-1E00-419D-B49A-23ECE8D83A1A": {
+			"explicitFileType": "sourcecode.cpp.cpp",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxToggle.cpp",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src/ofxToggle.cpp",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"BA34006D-698E-4CB0-80BC-CF61E17DFCC0": {
+			"explicitFileType": "sourcecode.cpp.cpp",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxJSONElement.cpp",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxJSON/src/ofxJSONElement.cpp",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"BB4B014C10F69532006C3DED": {
+			"children": [
+				"090564C1-A5C4-4867-B2E1-F202EE429987",
+				"79EC6542-09C4-47F9-BB27-941EB55385C7",
+				"F1878B19-F4D4-409A-98AA-A098FCA8B4E3"
+			],
+			"isa": "PBXGroup",
+			"name": "addons",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons",
+			"sourceTree": "<group>"
+		},
+		"C2107312-3AA2-494F-91D7-4A701F557D53": {
+			"fileRef": "4314A18A-43F0-4A92-A227-218979F51F20",
+			"isa": "PBXBuildFile"
+		},
+		"C3213D82-9A1D-4F91-9E37-1994EFA1E623": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "json.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxJSON/libs/jsoncpp/include/json/json.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"C327E93C-68FA-4A2D-88BB-19D9BFE803A9": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxDatGuiLabel.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/components/ofxDatGuiLabel.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"C425CF89-7374-4A78-A02A-DAC42EFDCFE4": {
+			"children": [
+				"9F03E37E-C494-43B1-8A38-4E000233068D",
+				"BA34006D-698E-4CB0-80BC-CF61E17DFCC0",
+				"1E786E4C-3E31-4952-89C2-CD55A5E1A3D0"
+			],
+			"isa": "PBXGroup",
+			"name": "src",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"C7F05EB6-BE73-41D6-8608-2EFC6FC997F9": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxDatGuiColorPicker.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/components/ofxDatGuiColorPicker.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"CC693262-1AF8-462B-8042-0FC14A94CD5A": {
+			"explicitFileType": "sourcecode.cpp.cpp",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxGuiGroup.cpp",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src/ofxGuiGroup.cpp",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"CF66B9BA-A14D-4A5E-8671-6961B27079AF": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxDatGuiTextInputField.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/components/ofxDatGuiTextInputField.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"CF6891FC-592D-4908-B161-12862012802B": {
+			"fileRef": "B13DF33B-8652-4C62-8378-4050C8ED2530",
+			"isa": "PBXBuildFile"
+		},
+		"D0504F6B-1D83-4902-9ABB-C62FA594C860": {
+			"children": [
+				"44A4960A-B8B0-4825-B9B7-8E7D1F627D01"
+			],
+			"isa": "PBXGroup",
+			"name": "libs",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"D0F4F3A3-3060-4011-ADCC-21136AE94832": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxGuiGroup.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src/ofxGuiGroup.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"D48B843E-CED8-428B-8787-E6E8A3BDD97A": {
+			"children": [
+				"8789F9C7-6CA9-49D4-8C09-DAF58981609F",
+				"B8FC3E4C-2C6E-4BBF-A449-FA994CE87D68",
+				"C7F05EB6-BE73-41D6-8608-2EFC6FC997F9",
+				"B4E34C0F-DC04-42E1-9120-2C8F4A4DE28A",
+				"91175A71-7440-41C8-93BC-9536A4D1538C",
+				"6B140ADB-029C-428E-90D9-8310C4923515",
+				"C327E93C-68FA-4A2D-88BB-19D9BFE803A9",
+				"969C33A2-E6B6-4AAC-8DFC-40A8F5433CCD",
+				"EDF99E21-B60F-45F3-A781-17F817B8C6D1",
+				"D743F3FE-7969-4BEC-99E7-105079A878E0",
+				"16271A65-66E4-4468-A34D-E4B812612D7E",
+				"CF66B9BA-A14D-4A5E-8671-6961B27079AF",
+				"10C5556C-237C-48F5-96AB-D316AF84D7F7"
+			],
+			"isa": "PBXGroup",
+			"name": "components",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"D6A8849B-6C47-4E08-A39C-D65FB9304A40": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxDatGuiComponent.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/core/ofxDatGuiComponent.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"D743F3FE-7969-4BEC-99E7-105079A878E0": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxDatGuiSlider.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/components/ofxDatGuiSlider.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"DA4241E9-C511-4EA5-9822-B1495B47864A": {
+			"fileRef": "ADCC16E9-5B68-44B0-AA1E-7AFF8A412CC5",
+			"isa": "PBXBuildFile"
+		},
+		"DADBDB22-B946-4E68-82CD-D80C7A601DD4": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxSlider.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src/ofxSlider.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"E3643957-5568-40DF-8BD4-FCB3E906F1AE": {
+			"explicitFileType": "sourcecode.cpp.cpp",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxInputField.cpp",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src/ofxInputField.cpp",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"E42962A92163ECCD00A6A9E2": {
+			"alwaysOutOfDate": "1",
+			"buildActionMask": "2147483647",
+			"files": [],
+			"inputPaths": [],
+			"isa": "PBXShellScriptBuildPhase",
+			"name": "Run Script — Compile OF",
+			"outputPaths": [],
+			"runOnlyForDeploymentPostprocessing": "0",
+			"shellPath": "/bin/sh",
+			"shellScript": "echo \"💾 Compiling Openframeworks\"\nxcodebuild -project \"$OF_PATH/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj\" -target openFrameworks -configuration \"${CONFIGURATION}\"  CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET GCC_PREPROCESSOR_DEFINITIONS=$USER_PREPROCESSOR_DEFINITIONS\n",
+			"showEnvVarsInLog": "0"
+		},
+		"E4A5B60F29BAAAE400C2D356": {
+			"buildActionMask": "2147483647",
+			"dstPath": "",
+			"dstSubfolderSpec": "6",
+			"files": [],
+			"isa": "PBXCopyFilesBuildPhase",
+			"runOnlyForDeploymentPostprocessing": "0"
+		},
+		"E4B69B4A0A3A1720003C02F2": {
+			"children": [
+				"191CD6FA2847E21E0085CBB6",
+				"E4B6FCAD0C3E899E008CF71C",
+				"E4EB6923138AFD0F00A09F29",
+				"E4B69E1C0A3A1BDC003C02F2",
+				"191EF70929D778A400F35F26",
+				"BB4B014C10F69532006C3DED",
+				"E4B69B5B0A3A1756003C02F2"
+			],
+			"isa": "PBXGroup",
+			"sourceTree": "<group>"
+		},
+		"E4B69B4C0A3A1720003C02F2": {
+			"attributes": {
+				"LastUpgradeCheck": "0600"
+			},
+			"buildConfigurationList": "E4B69B4D0A3A1720003C02F2",
+			"compatibilityVersion": "Xcode 3.2",
+			"developmentRegion": "en",
+			"hasScannedForEncodings": "0",
+			"isa": "PBXProject",
+			"knownRegions": [
+				"en",
+				"Base"
+			],
+			"mainGroup": "E4B69B4A0A3A1720003C02F2",
+			"productRefGroup": "E4B69B4A0A3A1720003C02F2",
+			"projectDirPath": "",
+			"projectRoot": "",
+			"targets": [
+				"E4B69B5A0A3A1756003C02F2"
+			]
+		},
+		"E4B69B4D0A3A1720003C02F2": {
+			"buildConfigurations": [
+				"E4B69B4E0A3A1720003C02F2",
+				"E4B69B4F0A3A1720003C02F2"
+			],
+			"defaultConfigurationIsVisible": "0",
+			"defaultConfigurationName": "Release",
+			"isa": "XCConfigurationList"
+		},
+		"E4B69B4E0A3A1720003C02F2": {
+			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
+			"buildSettings": {
+				"CODE_SIGN_ENTITLEMENTS": "of.entitlements",
+				"COPY_PHASE_STRIP": "NO",
+				"ENABLE_TESTABILITY": "YES",
+				"GCC_OPTIMIZATION_LEVEL": "0",
+				"GCC_WARN_UNUSED_VARIABLE": "NO",
+				"HEADER_SEARCH_PATHS": [
+					"$(OF_CORE_HEADERS)",
+					"src"
+				],
+				"OTHER_CPLUSPLUSFLAGS": "-D__MACOSX_CORE__"
+			},
+			"isa": "XCBuildConfiguration",
+			"name": "Debug"
+		},
+		"E4B69B4F0A3A1720003C02F2": {
+			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
+			"buildSettings": {
+				"CODE_SIGN_ENTITLEMENTS": "of.entitlements",
+				"COPY_PHASE_STRIP": "YES",
+				"GCC_OPTIMIZATION_LEVEL": "3",
+				"GCC_UNROLL_LOOPS": "YES",
+				"HEADER_SEARCH_PATHS": [
+					"$(OF_CORE_HEADERS)",
+					"src"
+				],
+				"OTHER_CPLUSPLUSFLAGS": "-D__MACOSX_CORE__"
+			},
+			"isa": "XCBuildConfiguration",
+			"name": "Release"
+		},
+		"E4B69B580A3A1756003C02F2": {
+			"buildActionMask": "2147483647",
+			"files": [
+				"E4B69E200A3A1BDC003C02F2",
+				"E4B69E210A3A1BDC003C02F2",
+				"37E05D99-8011-4ADE-A954-DAA82F367F9E",
+				"65A5EB69-B4DE-443B-9821-5EE10E2C53F8",
+				"C2107312-3AA2-494F-91D7-4A701F557D53",
+				"CF6891FC-592D-4908-B161-12862012802B",
+				"DA4241E9-C511-4EA5-9822-B1495B47864A",
+				"AC05F853-B903-431A-A57A-61B1D272A67A",
+				"43EF110E-C3EF-4C72-9718-ED6B849865B6",
+				"9E93D961-82B3-4728-8B3C-0FC13B328F87",
+				"372A5A2B-1665-42D1-B939-38658DE988F5",
+				"5904EB5D-E585-4341-A729-3BEA4822C622",
+				"8665D446-9604-4731-BB28-E417A451AA84",
+				"43FEB5DC-5820-4E17-AFEB-893DCC1EA567",
+				"FBAC64AC-124B-4620-AD5E-746D20EB8FD2",
+				"85A4962C-003E-4C9D-9487-0B975E21F658",
+				"166C1359-D3DD-40A4-9022-DA1BB4973DA8"
+			],
+			"isa": "PBXSourcesBuildPhase",
+			"runOnlyForDeploymentPostprocessing": "0"
+		},
+		"E4B69B590A3A1756003C02F2": {
+			"buildActionMask": "2147483647",
+			"files": [],
+			"isa": "PBXFrameworksBuildPhase",
+			"runOnlyForDeploymentPostprocessing": "0"
+		},
+		"E4B69B5A0A3A1756003C02F2": {
+			"buildConfigurationList": "E4B69B5F0A3A1757003C02F2",
+			"buildPhases": [
+				"E42962A92163ECCD00A6A9E2",
+				"E4B69B580A3A1756003C02F2",
+				"E4B69B590A3A1756003C02F2",
+				"E4C2427710CC5ABF004149E2",
+				"E4A5B60F29BAAAE400C2D356",
+				"19B789C429E5AB4A0082E9B8"
+			],
+			"buildRules": [],
+			"dependencies": [],
+			"isa": "PBXNativeTarget",
+			"name": "AVES",
+			"productName": "myOFApp",
+			"productReference": "E4B69B5B0A3A1756003C02F2",
+			"productType": "com.apple.product-type.application"
+		},
+		"E4B69B5B0A3A1756003C02F2": {
+			"explicitFileType": "wrapper.application",
+			"includeInIndex": "0",
+			"isa": "PBXFileReference",
+			"path": "AVESDebug.app",
+			"sourceTree": "BUILT_PRODUCTS_DIR"
+		},
+		"E4B69B5F0A3A1757003C02F2": {
+			"buildConfigurations": [
+				"E4B69B600A3A1757003C02F2",
+				"E4B69B610A3A1757003C02F2"
+			],
+			"defaultConfigurationIsVisible": "0",
+			"defaultConfigurationName": "Release",
+			"isa": "XCConfigurationList"
+		},
+		"E4B69B600A3A1757003C02F2": {
+			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
+			"buildSettings": {
+				"ARCHS": "$(ARCHS_STANDARD)",
+				"COPY_PHASE_STRIP": "NO",
+				"FRAMEWORK_SEARCH_PATHS": "$(inherited)",
+				"GCC_DYNAMIC_NO_PIC": "NO",
+				"HEADER_SEARCH_PATHS": [
+					"$(OF_CORE_HEADERS)",
+					"src",
+					"src",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/components",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/core",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/libs",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/libs/ofxSmartFont",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/themes",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxJSON/libs",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxJSON/libs/jsoncpp",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxJSON/libs/jsoncpp/include",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxJSON/libs/jsoncpp/include/json",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxJSON/libs/jsoncpp/src",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxJSON/src"
+				],
+				"LIBRARY_SEARCH_PATHS": "$(inherited)",
+				"OTHER_LDFLAGS": [
+					"$(OF_CORE_LIBS)",
+					"$(OF_CORE_FRAMEWORKS)",
+					"$(LIB_OF_DEBUG)"
+				]
+			},
+			"isa": "XCBuildConfiguration",
+			"name": "Debug"
+		},
+		"E4B69B610A3A1757003C02F2": {
+			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
+			"buildSettings": {
+				"ARCHS": "$(ARCHS_STANDARD)",
+				"COPY_PHASE_STRIP": "YES",
+				"FRAMEWORK_SEARCH_PATHS": "$(inherited)",
+				"HEADER_SEARCH_PATHS": [
+					"$(OF_CORE_HEADERS)",
+					"src",
+					"src",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/components",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/core",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/libs",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/libs/ofxSmartFont",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/themes",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxJSON/libs",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxJSON/libs/jsoncpp",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxJSON/libs/jsoncpp/include",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxJSON/libs/jsoncpp/include/json",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxJSON/libs/jsoncpp/src",
+					"/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxJSON/src"
+				],
+				"LIBRARY_SEARCH_PATHS": "$(inherited)",
+				"OTHER_LDFLAGS": [
+					"$(OF_CORE_LIBS)",
+					"$(OF_CORE_FRAMEWORKS)",
+					"$(LIB_OF)"
+				],
+				"baseConfigurationReference": "E4EB6923138AFD0F00A09F29"
+			},
+			"isa": "XCBuildConfiguration",
+			"name": "Release"
+		},
+		"E4B69E1C0A3A1BDC003C02F2": {
+			"children": [
+				"E4B69E1D0A3A1BDC003C02F2",
+				"E4B69E1E0A3A1BDC003C02F2",
+				"E4B69E1F0A3A1BDC003C02F2"
+			],
+			"isa": "PBXGroup",
+			"path": "src",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"E4B69E1D0A3A1BDC003C02F2": {
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.cpp",
+			"name": "main.cpp",
+			"path": "src/main.cpp",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"E4B69E1E0A3A1BDC003C02F2": {
+			"explicitFileType": "sourcecode.cpp.cpp",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofApp.cpp",
+			"path": "src/ofApp.cpp",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"E4B69E1F0A3A1BDC003C02F2": {
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"name": "ofApp.h",
+			"path": "src/ofApp.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"E4B69E200A3A1BDC003C02F2": {
+			"fileRef": "E4B69E1D0A3A1BDC003C02F2",
+			"isa": "PBXBuildFile"
+		},
+		"E4B69E210A3A1BDC003C02F2": {
+			"fileRef": "E4B69E1E0A3A1BDC003C02F2",
+			"isa": "PBXBuildFile"
+		},
+		"E4B6FCAD0C3E899E008CF71C": {
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "text.plist.xml",
+			"path": "openFrameworks-Info.plist",
+			"sourceTree": "<group>"
+		},
+		"E4C2427710CC5ABF004149E2": {
+			"buildActionMask": "2147483647",
+			"dstPath": "",
+			"dstSubfolderSpec": "10",
+			"files": [],
+			"isa": "PBXCopyFilesBuildPhase",
+			"runOnlyForDeploymentPostprocessing": "0"
+		},
+		"E4EB6923138AFD0F00A09F29": {
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "text.xcconfig",
+			"path": "Project.xcconfig",
+			"sourceTree": "<group>"
+		},
+		"E86288F0-7337-4136-AC9F-C9702703510C": {
+			"explicitFileType": "sourcecode.cpp.cpp",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxPanel.cpp",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxGui/src/ofxPanel.cpp",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"EDF99E21-B60F-45F3-A781-17F817B8C6D1": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxDatGuiScrollView.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/components/ofxDatGuiScrollView.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"F1878B19-F4D4-409A-98AA-A098FCA8B4E3": {
+			"children": [
+				"8E8C5347-5DE0-4874-8914-137D0441359C",
+				"C425CF89-7374-4A78-A02A-DAC42EFDCFE4"
+			],
+			"isa": "PBXGroup",
+			"name": "ofxJSON",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"FA80E048-31C1-427C-BC0B-6380C4740E21": {
+			"explicitFileType": "sourcecode.c.h",
+			"fileEncoding": "4",
+			"isa": "PBXFileReference",
+			"name": "ofxDatGuiThemes.h",
+			"path": "/Users/thalia/Antoine/audiotsne/of_v0.12.0_osx_release/addons/ofxDatGui/src/themes/ofxDatGuiThemes.h",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"FBAC64AC-124B-4620-AD5E-746D20EB8FD2": {
+			"fileRef": "BA276AC7-1E00-419D-B49A-23ECE8D83A1A",
+			"isa": "PBXBuildFile"
+		},
+		"FF0B2C0D-EC57-4606-AD04-7558134CF27F": {
+			"children": [
+				"890769AE-86BF-4E7D-A10E-14C8E09E18CA",
+				"FA80E048-31C1-427C-BC0B-6380C4740E21"
+			],
+			"isa": "PBXGroup",
+			"name": "themes",
+			"sourceTree": "SOURCE_ROOT"
+		}
+	},
+	"openFrameworksProjectGeneratorVersion": "21",
+	"rootObject": "E4B69B4C0A3A1720003C02F2"
+}
