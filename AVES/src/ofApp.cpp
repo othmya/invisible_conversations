@@ -306,7 +306,7 @@ void ofApp::update() {
 
     // Smoothly move towards the target position
     currentPosition = currentPosition.getInterpolated(targetPosition, transitionSpeed);
-
+    std::vector<NodeWithDistance> nodesWithDistances;
     // Only choose a new target when we're close to the current target
     if (currentPosition.distance(targetPosition) < 0.001) {
         // Find next node based on distance threshold
@@ -384,11 +384,57 @@ void ofApp::update() {
         }
 
         // Update the current node index to the target node index
-        ofLog()<<"currentNodeIndexupdate "<<currentNodeIndex;
+        // ofLog()<<"currentNodeIndexupdate "<<currentNodeIndex;
         currentNodeIndex = targetNodeIndex; // Select the next node
 
     }
 
+    // playing of sounds 
+    for (int i = 0; i < points.size(); ++i) {
+        float dist = currentPosition.distance(points[i]);
+        nodesWithDistances.push_back({i, dist});
+
+    }
+    std::sort(nodesWithDistances.begin(), nodesWithDistances.end(), [](const NodeWithDistance& a, const NodeWithDistance& b) {
+    return a.distance < b.distance;
+    });
+
+    if (nodesWithDistances.size() > 6) {
+            nodesWithDistances.resize(6);
+    }
+    // 
+            // Play sounds for the closest 6 nodes (active + 5 nearest)
+            for (int i = 0; i < nodesWithDistances.size(); ++i) {
+                int nodeIndex = nodesWithDistances[i].index;
+                ofVec3f nodePosition = points[nodeIndex];
+
+                // If sound isn't already playing, start playing with fade-in effect
+                if (soundPlayers.find(nodeIndex) == soundPlayers.end()) {
+                    ofSoundPlayer player;
+                    if (player.load(paths[nodeIndex])) {
+                        player.setMultiPlay(true);
+                        player.setLoop(false);
+                        player.play();
+                        player.setVolume(0); // Start with volume 0 for fade-in
+                        soundPlayers[nodeIndex] = player;
+                    }
+                }
+
+                // Fade-in or fade-out depending on distance
+                float distance = currentPosition.distance(nodePosition);
+                float targetVolume = ofMap(distance, 0, localWalkDistanceThreshold, 1.0, 0.0, true);
+                float fadeDuration = 2.0f; // Duration for fade-in/out in seconds
+
+                if (soundPlayers[nodeIndex].isPlaying()) {
+                    // Gradually adjust volume
+                    soundPlayers[nodeIndex].setVolume(ofLerp(soundPlayers[nodeIndex].getVolume(), targetVolume, fadeDuration * ofGetLastFrameTime()));
+                }
+            }
+        
+
+
+
+// 
     if (cameraMovement == "circular") {
         float radius = 20; // Radius of the circular path
         float speed = 0.1; // Speed of the movement
