@@ -70,7 +70,8 @@ public:
     void onButtonEvent(ofxDatGuiButtonEvent e); // Button event handler
     ofxDatGuiSlider* transitionSpeedSlider; // Slider for transition speed
 
-    
+    void setupGui();
+    void drawGui(ofEventArgs & args);
     // Slider event handler
     void onSliderEvent(ofxDatGuiSliderEvent e);
 

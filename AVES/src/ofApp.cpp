@@ -166,12 +166,7 @@ void ofApp::setup() {
     cam.setNearClip(0.01f); // Set the near clipping plane to 0.1 units
     cam.setFarClip(1000.0f); // Set the far clipping plane to 1000 units
 
-    // Set up the GUI
-    gui = new ofxDatGui(ofxDatGuiAnchor::TOP_RIGHT);
-    gui->setTheme(new ofxDatGuiThemeSmoke());
-    gui->setWidth(800); // Set the desired width for the GUI
-    gui->onSliderEvent(this, &ofApp::onSliderEvent);
-    gui->onButtonEvent(this, &ofApp::onButtonEvent);
+
 
 
     currentNodeIndex = ofRandom(points.size());
@@ -180,16 +175,9 @@ void ofApp::setup() {
     targetPosition = currentPosition;
 
     // Add a slider for local walk distance threshold
-    localWalkDistanceThreshold = 8.0f; // Set an initial value for the local walk distance threshold
-    localWalkDistanceThresholdSlider = gui->addSlider("Local Walk Distance Threshold", 2, 50, localWalkDistanceThreshold);
-    localWalkDistanceThresholdSlider->onSliderEvent(this, &ofApp::onSliderEvent); // Attach event handler
 
-    transitionSpeed = 0.02f; // Adjust this value to control the speed of movement
-    transitionSpeedSlider = gui->addSlider("Transition Speed", 0.01f, 1.0f, transitionSpeed);
-    transitionSpeedSlider->onSliderEvent(this, &ofApp::onSliderEvent); // Attach event handler
 
-    resetZoomButton = gui->addButton("Reset Zoom");
-    resetZoomButton->setWidth(500);
+
     
     
     cameraAngle = 0.0f;
@@ -199,14 +187,9 @@ void ofApp::setup() {
 
 
 
-    // Set the GUI theme to improve visibility
-    gui->setTheme(new ofxDatGuiThemeCharcoal());
 
-    // Adjust the position of the GUI
-    gui->setPosition(ofGetWidth() - 320, 20);
 
-    // Set up instruction text
-    // instructionText = "Use WASD to rotate the point cloud";
+
 
     // Font loading
     font.load("/Users/thalia/Antoine/invisible_conversations/AVES/bin/data/ofxbraitsch/fonts/Verdana.ttf", 10);
@@ -218,11 +201,19 @@ void ofApp::setup() {
 
 
     // Add a slider for distance threshold
-    distanceThreshold = 5.0f; // Set an initial value for the distance threshold
-    distanceThresholdSlider = gui->addSlider("Distance Threshold", 2, 22, distanceThreshold);
-    distanceThresholdSlider->onSliderEvent(this, &ofApp::onSliderEvent); // Attach event handler
 
-    landuseCategoryMap = {
+
+
+    // Set initial gui visibility to false
+
+
+}
+
+
+
+void ofApp::setupGui(){
+    // setup
+        landuseCategoryMap = {
         {"forest", "leafy"}, {"greenfield", "leafy"}, {"orchard", "leafy"},
         {"meadow", "leafy"}, {"residential", "leafy"}, {"village_green", "leafy"},
         {"recreation_ground", "leafy"}, {"greenery", "leafy"}, {"farmland", "leafy"},
@@ -241,12 +232,41 @@ void ofApp::setup() {
     };
 
 
-    // Clear previous options
+
+    // Set up the GUI
+    gui = new ofxDatGui(ofxDatGuiAnchor::TOP_RIGHT);
+    gui->setTheme(new ofxDatGuiThemeSmoke());
+    gui->setWidth(800); // Set the desired width for the GUI
+    gui->onSliderEvent(this, &ofApp::onSliderEvent);
+    gui->onButtonEvent(this, &ofApp::onButtonEvent);
+
+    localWalkDistanceThreshold = 8.0f; // Set an initial value for the local walk distance threshold
+    localWalkDistanceThresholdSlider = gui->addSlider("Local Walk Distance Threshold", 2, 50, localWalkDistanceThreshold);
+    localWalkDistanceThresholdSlider->onSliderEvent(this, &ofApp::onSliderEvent); // Attach event handler
+
+    transitionSpeed = 0.02f; // Adjust this value to control the speed of movement
+    transitionSpeedSlider = gui->addSlider("Transition Speed", 0.01f, 1.0f, transitionSpeed);
+    transitionSpeedSlider->onSliderEvent(this, &ofApp::onSliderEvent); // Attach event handler
+
+    resetZoomButton = gui->addButton("Reset Zoom");
+    resetZoomButton->setWidth(500);
+
+        // Set the GUI theme to improve visibility
+    gui->setTheme(new ofxDatGuiThemeCharcoal());
+
+    // Adjust the position of the GUI
+    gui->setPosition(ofGetWidth() - 320, 20);
+
+    distanceThreshold = 5.0f; // Set an initial value for the distance threshold
+    distanceThresholdSlider = gui->addSlider("Distance Threshold", 2, 22, distanceThreshold);
+    distanceThresholdSlider->onSliderEvent(this, &ofApp::onSliderEvent); // Attach event handler
+
+        // Clear previous options
     biasOptions.clear();
 
     // Use a set to collect unique bias options
     std::unordered_set<std::string> uniqueBiasOptions;
-
+    std::cout<<"hiiii "<<(landuseCategoryMap.size());
     // Add land use categories to the bias options
     for (const auto& pair : landuseCategoryMap) {
         uniqueBiasOptions.insert(pair.second); // Add the broader category (e.g., "leafy", "mineral", etc.)
@@ -259,7 +279,7 @@ void ofApp::setup() {
 
     // Populate the biasOptions vector with unique options
     biasOptions.assign(uniqueBiasOptions.begin(), uniqueBiasOptions.end());
-
+    
 
     biasDropdown = gui->addDropdown("Bias Towards", biasOptions); // Add dropdown to the GUI
     biasDropdown->setPosition(10, 10); // Set position of the dropdown
@@ -294,12 +314,8 @@ void ofApp::setup() {
     cameraMovementDropdown = gui->addDropdown("Camera Movement", {"Circular", "Dolly In/Out", "Pan", "Tilt", "Track Playhead", "Default", "Spiral", "Oscillate Zoom", "Follow Path", "Wobble"});
     cameraMovementDropdown->onDropdownEvent(this, &ofApp::onDropdownEvent); // Attach event handler
 
-    // Set initial gui visibility to false
-    guiVisible = false;
-
-
+    
 }
-
 //--------------------------------------------------------------
 void ofApp::update() {
     float currentTime = ofGetElapsedTimef();
@@ -614,11 +630,14 @@ void ofApp::draw() {
     }
 
     // Draw the GUI last to ensure it's on top
-    if (guiVisible) {
-        gui->draw();
-    }
+
 }
 
+
+//--------------------------------------------------------------
+void ofApp::drawGui(ofEventArgs & args){
+	gui->draw();
+}
 //--------------------------------------------------------------
 void ofApp::onSliderEvent(ofxDatGuiSliderEvent e) {
     if (e.target == distanceThresholdSlider) {
