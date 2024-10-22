@@ -25,6 +25,7 @@ public:
     // Camera and movement variables
     ofEasyCam cam;
     float sphereSize;
+    float original_sphereSize;
     float zoomFactor;
     float moveSpeed;
     float cameraDistance;
@@ -87,6 +88,7 @@ public:
 
     // Trail timing
     float trailStartTime; // To store the time when the trail starts
+    float zoomOutAndPanStartTime;
 
     // Color mode
     std::string colorMode; // To store the current color mode ("landuse" or "time")
@@ -118,5 +120,9 @@ public:
     ofColor getColorForLanduse(const std::string& category);
 
     bool guiVisible; // Variable to track GUI visibility
+
+    std::string getTimeCategoryFromValue(int timeValue);
+    int consecutiveBiasedMoves;
+    float biasStrength;
 
 };
