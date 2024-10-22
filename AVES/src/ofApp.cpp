@@ -61,6 +61,21 @@ ofColor generateColorForTime(int timeValue) {
     return ofColor(255, 255, 255, 50); // Default to black if time value is invalid
 }
 
+std::string ofApp::getTimeCategoryFromValue(int timeValue) {
+    if (timeValue >= 600 && timeValue <= 1000) {
+        return "early morning";
+    } else if (timeValue >= 1001 && timeValue <= 1200) {
+        return "morning";
+    } else if (timeValue >= 1201 && timeValue <= 1800) {
+        return "evening";
+    } else if (timeValue >= 1801 && timeValue <= 2400) {
+        return "night";
+    } else if (timeValue >= 2401 || timeValue <= 559) {
+        return "midnight";
+    }
+    return "unknown"; // Default category if time doesn't fit in any range
+}
+
 // Define new land use categories
 std::unordered_map<std::string, std::string> landuseCategoryMap = {
     {"forest", "leafy"}, {"greenfield", "leafy"}, {"orchard", "leafy"},
@@ -89,6 +104,9 @@ std::unordered_set<std::string> uniqueSpecies; // Set to store unique species
 
 // Create a vector for the new bias options
 std::vector<std::string> biasOptions;
+
+// Add this as a class member
+int consecutiveBiasedMoves = 0;
 
 
 
@@ -153,6 +171,7 @@ void ofApp::setup() {
     }
 
     sphereSize = 3;
+    original_sphereSize = 3;
     // moveSpeed = 0.5f;  // Slow down the movement speed for more control
     ofSetFrameRate(60);
     ofBackground(0, 0, 0); // Set background color to black
@@ -166,12 +185,7 @@ void ofApp::setup() {
     cam.setNearClip(0.01f); // Set the near clipping plane to 0.1 units
     cam.setFarClip(1000.0f); // Set the far clipping plane to 1000 units
 
-    // Set up the GUI
-    gui = new ofxDatGui(ofxDatGuiAnchor::TOP_RIGHT);
-    gui->setTheme(new ofxDatGuiThemeSmoke());
-    gui->setWidth(800); // Set the desired width for the GUI
-    gui->onSliderEvent(this, &ofApp::onSliderEvent);
-    gui->onButtonEvent(this, &ofApp::onButtonEvent);
+
 
 
     currentNodeIndex = ofRandom(points.size());
@@ -180,16 +194,9 @@ void ofApp::setup() {
     targetPosition = currentPosition;
 
     // Add a slider for local walk distance threshold
-    localWalkDistanceThreshold = 8.0f; // Set an initial value for the local walk distance threshold
-    localWalkDistanceThresholdSlider = gui->addSlider("Local Walk Distance Threshold", 2, 50, localWalkDistanceThreshold);
-    localWalkDistanceThresholdSlider->onSliderEvent(this, &ofApp::onSliderEvent); // Attach event handler
 
-    transitionSpeed = 0.02f; // Adjust this value to control the speed of movement
-    transitionSpeedSlider = gui->addSlider("Transition Speed", 0.01f, 1.0f, transitionSpeed);
-    transitionSpeedSlider->onSliderEvent(this, &ofApp::onSliderEvent); // Attach event handler
 
-    resetZoomButton = gui->addButton("Reset Zoom");
-    resetZoomButton->setWidth(500);
+
     
     
     cameraAngle = 0.0f;
@@ -199,14 +206,9 @@ void ofApp::setup() {
 
 
 
-    // Set the GUI theme to improve visibility
-    gui->setTheme(new ofxDatGuiThemeCharcoal());
 
-    // Adjust the position of the GUI
-    gui->setPosition(ofGetWidth() - 320, 20);
 
-    // Set up instruction text
-    // instructionText = "Use WASD to rotate the point cloud";
+
 
     // Font loading
     font.load("/Users/thalia/Antoine/invisible_conversations/AVES/bin/data/ofxbraitsch/fonts/Verdana.ttf", 10);
@@ -218,11 +220,19 @@ void ofApp::setup() {
 
 
     // Add a slider for distance threshold
-    distanceThreshold = 5.0f; // Set an initial value for the distance threshold
-    distanceThresholdSlider = gui->addSlider("Distance Threshold", 2, 22, distanceThreshold);
-    distanceThresholdSlider->onSliderEvent(this, &ofApp::onSliderEvent); // Attach event handler
 
-    landuseCategoryMap = {
+
+
+    // Set initial gui visibility to false
+
+
+}
+
+
+
+void ofApp::setupGui(){
+    // setup
+        landuseCategoryMap = {
         {"forest", "leafy"}, {"greenfield", "leafy"}, {"orchard", "leafy"},
         {"meadow", "leafy"}, {"residential", "leafy"}, {"village_green", "leafy"},
         {"recreation_ground", "leafy"}, {"greenery", "leafy"}, {"farmland", "leafy"},
@@ -241,12 +251,41 @@ void ofApp::setup() {
     };
 
 
-    // Clear previous options
+
+    // Set up the GUI
+    gui = new ofxDatGui(ofxDatGuiAnchor::TOP_RIGHT);
+    gui->setTheme(new ofxDatGuiThemeSmoke());
+    gui->setWidth(800); // Set the desired width for the GUI
+    gui->onSliderEvent(this, &ofApp::onSliderEvent);
+    gui->onButtonEvent(this, &ofApp::onButtonEvent);
+
+    localWalkDistanceThreshold = 8.0f; // Set an initial value for the local walk distance threshold
+    localWalkDistanceThresholdSlider = gui->addSlider("Local Walk Distance Threshold", 2, 50, localWalkDistanceThreshold);
+    localWalkDistanceThresholdSlider->onSliderEvent(this, &ofApp::onSliderEvent); // Attach event handler
+
+    transitionSpeed = 0.02f; // Adjust this value to control the speed of movement
+    transitionSpeedSlider = gui->addSlider("Transition Speed", 0.01f, 1.0f, transitionSpeed);
+    transitionSpeedSlider->onSliderEvent(this, &ofApp::onSliderEvent); // Attach event handler
+
+    resetZoomButton = gui->addButton("Reset Zoom");
+    resetZoomButton->setWidth(500);
+
+        // Set the GUI theme to improve visibility
+    gui->setTheme(new ofxDatGuiThemeCharcoal());
+
+    // Adjust the position of the GUI
+    gui->setPosition(ofGetWidth() - 320, 20);
+
+    distanceThreshold = 5.0f; // Set an initial value for the distance threshold
+    distanceThresholdSlider = gui->addSlider("Distance Threshold", 2, 22, distanceThreshold);
+    distanceThresholdSlider->onSliderEvent(this, &ofApp::onSliderEvent); // Attach event handler
+
+        // Clear previous options
     biasOptions.clear();
 
     // Use a set to collect unique bias options
     std::unordered_set<std::string> uniqueBiasOptions;
-
+    std::cout<<"hiiii "<<(landuseCategoryMap.size());
     // Add land use categories to the bias options
     for (const auto& pair : landuseCategoryMap) {
         uniqueBiasOptions.insert(pair.second); // Add the broader category (e.g., "leafy", "mineral", etc.)
@@ -259,7 +298,7 @@ void ofApp::setup() {
 
     // Populate the biasOptions vector with unique options
     biasOptions.assign(uniqueBiasOptions.begin(), uniqueBiasOptions.end());
-
+    
 
     biasDropdown = gui->addDropdown("Bias Towards", biasOptions); // Add dropdown to the GUI
     biasDropdown->setPosition(10, 10); // Set position of the dropdown
@@ -277,8 +316,8 @@ void ofApp::setup() {
     // Generate random colors for each unique species
     for (const auto& species : uniqueSpecies) {
         float hue = ofRandom(0, 255); // Random hue
-        float saturation = ofRandom(100, 255); // Random saturation
-        float brightness = ofRandom(100, 255); // Random brightness
+        float saturation = 200;
+        float brightness = 200;
         ofColor color = ofColor::fromHsb(hue, saturation, brightness); // Create color from HSB
         speciesColorMap[species] = color; // Map species to color
     }
@@ -287,26 +326,22 @@ void ofApp::setup() {
     // Add a dropdown for color selection
     colorModeDropdown = gui->addDropdown("Color Mode", {"Landuse", "Time", "Species"});
     colorModeDropdown->onDropdownEvent(this, &ofApp::onDropdownEvent);
-    colorMode = "Time"; 
+    colorMode = "Species"; 
     ofLog() << "Initial color mode: " << colorMode;
 
     // Set up the camera movement dropdown
     cameraMovementDropdown = gui->addDropdown("Camera Movement", {"Circular", "Dolly In/Out", "Pan", "Tilt", "Track Playhead", "Default", "Spiral", "Oscillate Zoom", "Follow Path", "Wobble"});
     cameraMovementDropdown->onDropdownEvent(this, &ofApp::onDropdownEvent); // Attach event handler
 
-    // Set initial gui visibility to false
-    guiVisible = false;
-
-
+    
 }
-
 //--------------------------------------------------------------
 void ofApp::update() {
     float currentTime = ofGetElapsedTimef();
 
     // Smoothly move towards the target position
     currentPosition = currentPosition.getInterpolated(targetPosition, transitionSpeed);
-    std::vector<NodeWithDistance> nodesWithDistances;
+
     // Only choose a new target when we're close to the current target
     if (currentPosition.distance(targetPosition) < 0.001) {
         // Find next node based on distance threshold
@@ -322,74 +357,137 @@ void ofApp::update() {
                                    (timeCategoryMap.find(biasCategory) != timeCategoryMap.end());
 
         // Define a smaller radius for stricter clustering check
-        float smallerRadius = 2.0f; // Hardcoded smaller radius
+        float smallerRadius = 8.0f; // Hardcoded smaller radius
         float currentRadius = localWalkDistanceThreshold; // Start with the original radius
 
         // First pass: Check for nearby nodes within the current radius
         for (int i = 0; i < points.size(); ++i) {
             if (i != currentNodeIndex) {
                 float dist = currentPosition.distance(points[i]);
-                if (dist < currentRadius) { // Check if within the distance threshold
-                    nearbyNodes.push_back(i); // Add to nearby nodes
+                if (dist < currentRadius) {
+                    nearbyNodes.push_back(i);
 
-                    // Check if the landuse category matches the bias category only if it's valid
-                    std::string landuseCategory = landuseCategories[i];
-                    std::string broaderCategory = landuseCategoryMap[landuseCategory]; // Get the broader category
+                   
+                    std::string category;
+                    std::string broaderCategory;
 
-                    // Check if the current point's land use matches the bias category
-                    if (isBiasCategoryValid && (broaderCategory == biasCategory)) {
-                        biasedNodes.push_back(i); // Add to biased nodes
-                        categoryCount[i]++; // Increment the count for this node
+                    if (colorMode == "Landuse") {
+                        category = landuseCategories[i];
+                        broaderCategory = landuseCategoryMap[category];
+                    } else if (colorMode == "Time") {
+                        category = std::to_string(timeValues[i]); // Convert time value to string
+                        broaderCategory = getTimeCategoryFromValue(timeValues[i]); // New function to get time category
+                    } else if (colorMode == "Species") {
+                        category = speciesNames[i];
+                        broaderCategory = category; // For species, we use the species name directly
+                    }
+    
+                    // ofLog() << "Category: " << category << ", Broader category: " << broaderCategory;
+
+                    // Check if the current point's broader category matches the bias category
+                    if (broaderCategory == biasCategory) {
+                        biasedNodes.push_back(i);
+                        categoryCount[i] += 1 + biasStrength;  // Add extra weight based on bias strength
+                        ofLog() << "Biased node found: " << i;
                     }
                 }
             }
         }
 
-        // Check if more than 80% of nearby nodes are from the same category
-        if (!biasedNodes.empty() && nearbyNodes.size() > 0) {
-            float percentage = (static_cast<float>(biasedNodes.size()) / nearbyNodes.size()) * 100.0f;
-            if (percentage > 80.0f) {
-                currentRadius = smallerRadius; // Reduce the radius to focus on the area
+        // Check if more than 50% of nodes within the smaller radius are from the same category
+        int biasedNodesInSmallerRadius = 0;
+        int totalNodesInSmallerRadius = 0;
+
+        for (int i = 0; i < points.size(); ++i) {
+            if (i != currentNodeIndex) {
+                float dist = currentPosition.distance(points[i]);
+                if (dist < smallerRadius) {
+                    totalNodesInSmallerRadius++;
+                    if (std::find(biasedNodes.begin(), biasedNodes.end(), i) != biasedNodes.end()) {
+                        biasedNodesInSmallerRadius++;
+                    }
+                }
             }
         }
 
-        // Second pass: Check for clustering within the smaller radius
+        if (totalNodesInSmallerRadius > 0) {
+            float percentage = (static_cast<float>(biasedNodesInSmallerRadius) / totalNodesInSmallerRadius) * 100.0f;
+            if (percentage > 70.0f) {
+                currentRadius = smallerRadius; // Reduce the radius to focus on the area
+                ofLog() << "Biased nodes found in smaller radius, reducing radius to " << currentRadius;
+            }
+        }
+
+        // Second pass: Check for clustering within the current radius (which might now be the smaller radius)
         if (!biasedNodes.empty()) {
-            std::unordered_map<int, int> clusteringCount; // Map to count clustering of biased nodes
+            std::unordered_map<int, float> clusteringCount;
+            float biasWeight = 10.0f;  // Increase this value to strengthen the bias
             for (const auto& node : biasedNodes) {
                 for (int j = 0; j < points.size(); ++j) {
                     if (j != currentNodeIndex) {
                         float dist = points[node].distance(points[j]);
-                        if (dist < currentRadius) { // Check if within the current distance threshold
-                            clusteringCount[node]++; // Increment the clustering count for this node
+                        if (dist < currentRadius) {
+                            clusteringCount[node] += (std::find(biasedNodes.begin(), biasedNodes.end(), j) != biasedNodes.end()) ? biasWeight : 1.0f;
                         }
                     }
                 }
             }
 
             // Determine the target position based on the highest clustering count
-            int maxCount = 0;
+            float maxCount = 0;
             for (const auto& node : biasedNodes) {
                 if (clusteringCount[node] > maxCount) {
                     maxCount = clusteringCount[node];
-                    targetNodeIndex = node; // Update target node index
+                    targetNodeIndex = node;
                 }
             }
 
             if (targetNodeIndex != -1) {
                 targetPosition = points[targetNodeIndex]; // Set the new target position to the node with the highest clustering
+
+                // Dynamically adjust the local walk distance threshold based on the distance to the target
+                float distanceToTarget = currentPosition.distance(targetPosition);
+                if (distanceToTarget > localWalkDistanceThreshold) {
+                    localWalkDistanceThreshold = std::min(distanceToTarget * 1.5f, 30.0f); // Increase radius for long jumps
+                }
             }
         } else if (!nearbyNodes.empty()) {
-            targetPosition = points[nearbyNodes[ofRandom(nearbyNodes.size())]]; // Fallback to a random nearby node
+            if (ofRandom(1.0) < biasStrength) {
+                // Choose from biased nodes if available, otherwise from all nearby nodes
+                auto& choiceVector = !biasedNodes.empty() ? biasedNodes : nearbyNodes;
+                targetPosition = points[choiceVector[ofRandom(choiceVector.size())]];
+            } else {
+                targetPosition = points[nearbyNodes[ofRandom(nearbyNodes.size())]];
+            }
         }
 
+
+
+
         // Update the current node index to the target node index
-        // ofLog()<<"currentNodeIndexupdate "<<currentNodeIndex;
         currentNodeIndex = targetNodeIndex; // Select the next node
 
-    }
+        // After selecting the target node:
+        if (targetNodeIndex != -1 && std::find(biasedNodes.begin(), biasedNodes.end(), targetNodeIndex) != biasedNodes.end()) {
+            consecutiveBiasedMoves++;
+            float momentumFactor = std::min(consecutiveBiasedMoves * 0.1f, 0.5f);
+            localWalkDistanceThreshold *= (1.0f - momentumFactor);
+            transitionSpeed *= (1.0f - momentumFactor);
+        } else {
+            consecutiveBiasedMoves = 0;
+        }
 
-    // playing of sounds 
+        // Adjust the local walk distance threshold dynamically based on the clustering
+        if (targetNodeIndex != -1) {
+            localWalkDistanceThreshold = std::max(localWalkDistanceThreshold * 0.6f, 0.5f);  // More aggressive reduction
+            transitionSpeed = std::max(transitionSpeed * 0.6f, 0.005f);  // More aggressive reduction
+        } else {
+            localWalkDistanceThreshold = std::min(localWalkDistanceThreshold * 1.5f, 25.0f);  // More aggressive increase
+            transitionSpeed = std::min(transitionSpeed * 1.5f, 0.3f);  // More aggressive increase
+        }
+    }
+            // playsounds
+    std::vector<NodeWithDistance> nodesWithDistances;
     for (int i = 0; i < points.size(); ++i) {
         float dist = currentPosition.distance(points[i]);
         nodesWithDistances.push_back({i, dist});
@@ -404,37 +502,33 @@ void ofApp::update() {
     }
     // 
             // Play sounds for the closest 6 nodes (active + 5 nearest)
-            for (int i = 0; i < nodesWithDistances.size(); ++i) {
-                int nodeIndex = nodesWithDistances[i].index;
-                ofVec3f nodePosition = points[nodeIndex];
+    for (int i = 0; i < nodesWithDistances.size(); ++i) {
+        int nodeIndex = nodesWithDistances[i].index;
+        ofVec3f nodePosition = points[nodeIndex];
 
-                // If sound isn't already playing, start playing with fade-in effect
-                if (soundPlayers.find(nodeIndex) == soundPlayers.end()) {
-                    ofSoundPlayer player;
-                    if (player.load(paths[nodeIndex])) {
-                        player.setMultiPlay(true);
-                        player.setLoop(false);
-                        player.play();
-                        player.setVolume(0); // Start with volume 0 for fade-in
-                        soundPlayers[nodeIndex] = player;
-                    }
-                }
-
-                // Fade-in or fade-out depending on distance
-                float distance = currentPosition.distance(nodePosition);
-                float targetVolume = ofMap(distance, 0, localWalkDistanceThreshold, 1.0, 0.0, true);
-                float fadeDuration = 2.0f; // Duration for fade-in/out in seconds
-
-                if (soundPlayers[nodeIndex].isPlaying()) {
-                    // Gradually adjust volume
-                    soundPlayers[nodeIndex].setVolume(ofLerp(soundPlayers[nodeIndex].getVolume(), targetVolume, fadeDuration * ofGetLastFrameTime()));
-                }
+        // If sound isn't already playing, start playing with fade-in effect
+        if (soundPlayers.find(nodeIndex) == soundPlayers.end()) {
+            ofSoundPlayer player;
+            if (player.load(paths[nodeIndex])) {
+                player.setMultiPlay(true);
+                player.setLoop(false);
+                player.play();
+                player.setVolume(0); // Start with volume 0 for fade-in
+                soundPlayers[nodeIndex] = player;
             }
-        
+        }
 
+        // Fade-in or fade-out depending on distance
+        float distance = currentPosition.distance(nodePosition);
+        float targetVolume = ofMap(distance, 0, localWalkDistanceThreshold, 1.0, 0.0, true);
+        float fadeDuration = 2.0f; // Duration for fade-in/out in seconds
 
+        if (soundPlayers[nodeIndex].isPlaying()) {
+            // Gradually adjust volume
+            soundPlayers[nodeIndex].setVolume(ofLerp(soundPlayers[nodeIndex].getVolume(), targetVolume, fadeDuration * ofGetLastFrameTime()));
+        }
+    }
 
-// 
     if (cameraMovement == "circular") {
         float radius = 20; // Radius of the circular path
         float speed = 0.1; // Speed of the movement
@@ -489,14 +583,21 @@ void ofApp::update() {
         // Restore default camera behavior
         cam.lookAt(ofVec3f(0, 0, 0)); // Look at the center
         trackPlayhead = false;
+        sphereSize = original_sphereSize;
     } else if (cameraMovement == "spiral") {
+        
+        cam.reset(); // Restore camera to default position and orientation
+        cam.setDistance(cameraDistance); // Set to your desired default distance
+        trackPlayhead = false; // Reset tracking when camera is restored
+        sphereSize = original_sphereSize; // Reset sphere size to the original value
+
         static float spiralAngle = 0; // Angle for the spiral movement
         static float spiralRadius = 20; // Initial radius
         static float spiralHeight = 0; // Height offset
 
-        spiralAngle += 0.02; // Increment the angle
-        spiralRadius += 0.05; // Gradually increase the radius
-        spiralHeight += 0.1; // Gradually increase the height
+        spiralAngle += 0.01; // Increment the angle more gently
+        spiralRadius += 0.025; // Gradually increase the radius more gently
+        spiralHeight += 0.05; // Gradually increase the height more gently
 
         float camX = spiralRadius * cos(spiralAngle);
         float camY = spiralHeight; // Use height for vertical movement
@@ -504,6 +605,7 @@ void ofApp::update() {
 
         cam.setPosition(camX, camY, camZ); // Set the new camera position
         cam.lookAt(ofVec3f(0, 0, 0)); // Look at the center
+
     } else if (cameraMovement == "oscillateZoom") {
         static float zoomSpeed = 0.5; // Speed of zooming
         static float zoomFactor = 0.5; // Current zoom factor
@@ -548,6 +650,31 @@ void ofApp::update() {
 
         cam.setPosition(camX, camY, camZ); // Set the new camera position
         cam.lookAt(ofVec3f(0, 0, 0)); // Look at the center
+    } else if (cameraMovement == "zoomOutAndPan") {
+        float elapsedTime = ofGetElapsedTimef() - zoomOutAndPanStartTime;
+        float duration = 10.0f; // Total duration of the effect in seconds
+        float progress = ofClamp(elapsedTime / duration, 0, 1);
+
+        // Zoom out effect
+        float startDistance = 30;
+        float endDistance = 100;
+        float currentDistance = ofLerp(startDistance, endDistance, progress);
+
+        // Panning effect
+        float panAngle = progress * TWO_PI; // Full 360-degree pan
+        float panRadius = 50;
+        float camX = panRadius * cos(panAngle);
+        float camZ = panRadius * sin(panAngle);
+
+        // Set camera position
+        cam.setPosition(camX, 0, camZ + currentDistance);
+        cam.lookAt(ofVec3f(0, 0, 0));
+
+        // Reset camera movement when effect is complete
+        if (progress >= 1.0) {
+            cameraMovement = "default";
+            ofLog() << "Zoom out and pan effect completed";
+        }
     }
 
     // Adjust sphere size based on camera distance
@@ -555,7 +682,7 @@ void ofApp::update() {
     // sphereSize = ofMap(cameraDistance, 0, 1000, 2, 10); // Map camera distance to sphere size (adjust values as needed)
 
 
-    gui->update();
+    // gui->update();
 }
 
 //--------------------------------------------------------------
@@ -638,9 +765,9 @@ void ofApp::draw() {
     ofDisableDepthTest();
 
     // Draw species name at the bottom center
-    // ofLog()<<"currentNodeIndex "<<currentNodeIndex;
+    ofLog()<<"currentNodeIndex "<<currentNodeIndex;
     std::string speciesName = speciesNames[currentNodeIndex];
-    // ofLog()<<"speciesName "<<speciesName;
+    ofLog()<<"speciesNamet "<<speciesName;
     ofRectangle bounds = font.getStringBoundingBox(speciesName, 0, 0);
     float x = (ofGetWidth() - bounds.width) / 2;
     float y = ofGetHeight() - bounds.height - 20;
@@ -660,11 +787,14 @@ void ofApp::draw() {
     }
 
     // Draw the GUI last to ensure it's on top
-    if (guiVisible) {
-        gui->draw();
-    }
+
 }
 
+
+//--------------------------------------------------------------
+void ofApp::drawGui(ofEventArgs & args){
+	gui->draw();
+}
 //--------------------------------------------------------------
 void ofApp::onSliderEvent(ofxDatGuiSliderEvent e) {
     if (e.target == distanceThresholdSlider) {
@@ -684,6 +814,7 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
         cam.setDistance(cameraDistance); // Set to your desired default distance
         trackPlayhead = false; // Reset tracking when zoom is reset
         cameraMovement = "default"; // Reset camera movement to default
+        sphereSize = original_sphereSize;
     } 
 }
 
@@ -712,6 +843,7 @@ void ofApp::onDropdownEvent(ofxDatGuiDropdownEvent e) {
             cameraMovement = "track"; // Set to track playhead
         } else if (selectedMovement == "Default") {
             cameraMovement = "default"; // Set to default behavior
+            sphereSize = original_sphereSize;
         } else if (selectedMovement == "Spiral") {
             cameraMovement = "spiral"; // Set to spiral movement
         } else if (selectedMovement == "Oscillate Zoom") {
@@ -726,25 +858,129 @@ void ofApp::onDropdownEvent(ofxDatGuiDropdownEvent e) {
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
+    if (key == 't' || key == 'T') {
+        cameraMovement = "track";
+        trackPlayhead = true;
+        sphereSize = 10;        
+        ofLog() << "Switched to Track Playhead mode";
 
-    // Check if the 'R' key is pressed
-    if (key == 'r') {
-        // Randomly select a new node from the entire point cloud
-        if (!points.empty()) {
-            currentNodeIndex = ofRandom(points.size()); // Randomly select an index from the points vector
-            currentPosition = points[currentNodeIndex]; // Update the current position
+    } else if (key == '1') {
+        // Zoom in on the center of the point cloud
+        ofVec3f center(0, 0, 0); // Assuming the center is at (0,0,0)
+        float zoomDistance = 10; // Adjust this value to set how close you want to zoom
+        colorMode = "Species";
 
-            // Initialize or reset random walk variables
-            visitedNodes.clear(); // Clear previously visited nodes
-            visitedNodes.push_back(currentNodeIndex); // Mark the starting node as visited
+        cam.setPosition(center);
+        cam.move(0, 0, zoomDistance);
+        cam.lookAt(center);
 
-            // Optionally, reset other random walk parameters if needed
-            nextNodeDistanceProb = 0.5f; // Example: set a default probability
+        distanceThreshold = 0; // Start value
+        distanceThresholdSlider->setValue(distanceThreshold);
+        // Update camera movement mode
+        cameraMovement = "default";
+        ofLog() << "Zoomed in on center, distance threshold set to 0";
 
-            ofLog() << "Starting walk from point: " << currentPosition; // Log for debugging
-        } else {
-            ofLog() << "No points available to start the walk."; // Log if no points are found
-        }
+    } else if (key == '2') {
+        // Switch to "track" camera movement with reduced transition speed
+        cameraMovement = "track";
+        trackPlayhead = true;
+        transitionSpeed = 0.02f;
+
+        distanceThreshold = 8; // Start value
+        distanceThresholdSlider->setValue(distanceThreshold);
+        
+        // Update the transition speed slider
+        transitionSpeedSlider->setValue(transitionSpeed);
+        
+        ofLog() << "Switched to Track mode with reduced transition speed";
+
+    } else if (key == '3') {
+        cameraMovement = "circular";
+        distanceThreshold = 10; // Start value
+        distanceThresholdSlider->setValue(distanceThreshold);
+
+        sphereSize = original_sphereSize; // Reset sphere size to the original value
+        // Set initial camera position
+        cam.setPosition(0, 0, 0); // Start closer to the center
+        cam.lookAt(ofVec3f(0, 0, 0));
+
+        ofLog() << "Started zoom out and pan effect";
+
+    } else if (key == '4') {
+        // Change color mode to Time
+        colorMode = "Time";        
+        ofLog() << "Color mode changed to Time";
+
+        cameraMovement = "circular";
+
+        localWalkDistanceThreshold = 15.0f; // Adjust this value as needed
+        localWalkDistanceThresholdSlider->setValue(localWalkDistanceThreshold);
+        
+        // Increase transition speed
+        transitionSpeed = 0.05f; // Adjust this value as needed
+        transitionSpeedSlider->setValue(transitionSpeed);
+        
+        // Set bias to midnight
+        biasCategory = "midnight";
+
+    } else if (key == '5') {
+        cam.reset();
+        cam.setDistance(cameraDistance); // Set to your desired default distance
+        trackPlayhead = false; // Reset tracking when zoom is reset
+        cameraMovement = "default"; // Reset camera movement to default
+        sphereSize = original_sphereSize;
+        
+        ofLog() << "Reset to default view. Spiral movement will start in 5 seconds.";
+    } else if (key == '6') {
+        cameraMovement = "spiral"; // Change camera movement to spiral
+    } else if (key == 'z' || key == 'Z') {
+        // Increase distance threshold by 0.05
+        distanceThreshold += 0.1f;
+        // Update the distance threshold slider
+        distanceThresholdSlider->setValue(distanceThreshold);
+        ofLog() << "Distance threshold increased to: " << distanceThreshold;
+    } else if (key == 'x' || key == 'X') {
+        // Decrease distance threshold by 0.05
+        distanceThreshold -= 0.1f;
+        // Update the distance threshold slider
+        distanceThresholdSlider->setValue(distanceThreshold);
+        ofLog() << "Distance threshold decreased to: " << distanceThreshold;
+    } else if (key == 'c' || key == 'C') {
+        // increase local walk distance threshold by 0.05
+        localWalkDistanceThreshold += 0.5f;
+        // Update the local walk distance threshold slider
+        localWalkDistanceThresholdSlider->setValue(localWalkDistanceThreshold);
+        ofLog() << "Local walk distance threshold increased to: " << localWalkDistanceThreshold;
+    } else if (key == 'v' || key == 'V') {
+        // decrease local walk distance threshold by 0.05
+        localWalkDistanceThreshold -= 0.5f;
+        // Update the local walk distance threshold slider
+        localWalkDistanceThresholdSlider->setValue(localWalkDistanceThreshold);
+        ofLog() << "Local walk distance threshold decreased to: " << localWalkDistanceThreshold;
+    } else if (key == 'b' || key == 'B') {
+        // increase transition speed by 0.05
+        transitionSpeed += 0.1f;
+        // Update the transition speed slider
+        transitionSpeedSlider->setValue(transitionSpeed);
+        ofLog() << "Transition speed increased to: " << transitionSpeed;
+    } else if (key == 'n' || key == 'N') {
+        // decrease transition speed by 0.05
+        transitionSpeed -= 0.1f;
+        // Update the transition speed slider
+        transitionSpeedSlider->setValue(transitionSpeed);
+        ofLog() << "Transition speed decreased to: " << transitionSpeed;
+    } else if (key == 'q' || key == 'Q') {
+        // change color to time
+        colorMode = "Time";
+        ofLog() << "Color mode changed to Time";
+    } else if (key == 'w' || key == 'W') {
+        // change color to species
+        colorMode = "Species";
+        ofLog() << "Color mode changed to Species";
+    } else if (key == 'e' || key == 'E') {
+        // change color to landuse
+        colorMode = "Landuse";
+        ofLog() << "Color mode changed to Landuse";
     }
 }
 
@@ -755,28 +991,11 @@ void ofApp::keyReleased(int key) {
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y) {
-    // Check if the mouse is over the GUI area
-    if (gui->getPosition().x <= x && x <= gui->getPosition().x + gui->getWidth() &&
-        gui->getPosition().y <= y && y <= gui->getPosition().y + gui->getHeight()) {
-        guiVisible = true; // Show the GUI if mouse is over it
-    } else {
-        guiVisible = false; // Hide the GUI if mouse is not over it
-    }
+    // // Check if the mouse is over the GUI area
+    // if (gui->getPosition().x <= x && x <= gui->getPosition().x + gui->getWidth() &&
+    //     gui->getPosition().y <= y && y <= gui->getPosition().y + gui->getHeight()) {
+    //     guiVisible = true; // Show the GUI if mouse is over it
+    // } else {
+    //     guiVisible = false; // Hide the GUI if mouse is not over it
+    // }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

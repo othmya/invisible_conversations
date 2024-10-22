@@ -25,6 +25,7 @@ public:
     // Camera and movement variables
     ofEasyCam cam;
     float sphereSize;
+    float original_sphereSize;
     float zoomFactor;
     float moveSpeed;
     float cameraDistance;
@@ -70,7 +71,8 @@ public:
     void onButtonEvent(ofxDatGuiButtonEvent e); // Button event handler
     ofxDatGuiSlider* transitionSpeedSlider; // Slider for transition speed
 
-    
+    void setupGui();
+    void drawGui(ofEventArgs & args);
     // Slider event handler
     void onSliderEvent(ofxDatGuiSliderEvent e);
 
@@ -83,12 +85,10 @@ public:
     std::unordered_map<std::string, ofColor> landuseColorMap; // Map for landuse to color
     std::vector<ofColor> availableColors; // Vector of available colors
     std::vector<ofColor> previousColors; // To store the previous colors of the points
-    struct NodeWithDistance {
-        int index;
-        float distance;
-    };
+
     // Trail timing
     float trailStartTime; // To store the time when the trail starts
+    float zoomOutAndPanStartTime;
 
     // Color mode
     std::string colorMode; // To store the current color mode ("landuse" or "time")
@@ -121,8 +121,15 @@ public:
 
     bool guiVisible; // Variable to track GUI visibility
 
+    std::string getTimeCategoryFromValue(int timeValue);
+    int consecutiveBiasedMoves;
+    float biasStrength;
 
+    struct NodeWithDistance {
+        int index;
+        float distance;
+    };
+    // Trail 
     std::unordered_map<int, ofSoundPlayer> soundPlayers;
     ofSoundPlayer soundPlayer;
-
 };
