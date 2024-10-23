@@ -111,9 +111,9 @@ int consecutiveBiasedMoves = 0;
 
 //--------------------------------------------------------------
 void ofApp::setup() {
-    std::string jsonFilePath = "/home/oth/Downloads/OpenFrameworks/apps/myApps/AVES/bin/data/output_all_v1.json"; 
+    std::string jsonFilePath = "output_all.json"; 
     ofxJSONElement json;
-    bool success = json.open(jsonFilePath);
+    bool success = json.open(ofToDataPath(jsonFilePath));
 
     if (success) {
         for (Json::ArrayIndex i = 0; i < json.size(); ++i) {
@@ -226,7 +226,7 @@ void ofApp::setup() {
     // instructionText = "Use WASD to rotate the point cloud";
 
     // Font loading
-    font.load("verdana.ttf", 10);
+    font.load("/Users/thalia/Antoine/invisible_conversations/AVES/bin/data/ofxbraitsch/fonts/Verdana.ttf", 10);
 
     // Initialize previousColors with the same size as points
     previousColors.resize(points.size(), ofColor(0, 0, 0, 0)); // Initialize with transparent black
@@ -465,6 +465,7 @@ void ofApp::update() {
             localWalkDistanceThreshold = std::min(localWalkDistanceThreshold * 1.5f, 25.0f);  // More aggressive increase
             transitionSpeed = std::min(transitionSpeed * 1.5f, 0.3f);  // More aggressive increase
         }
+        
     }
 
     if (cameraMovement == "circular") {
@@ -533,9 +534,9 @@ void ofApp::update() {
         static float spiralRadius = 20; // Initial radius
         static float spiralHeight = 0; // Height offset
 
-        spiralAngle += 0.01; // Increment the angle more gently
-        spiralRadius += 0.025; // Gradually increase the radius more gently
-        spiralHeight += 0.05; // Gradually increase the height more gently
+        spiralAngle += 0.005; // Increment the angle more gently
+        spiralRadius += 0.01; // Gradually increase the radius more gently
+        spiralHeight += 0.02; // Gradually increase the height more gently
 
         float camX = spiralRadius * cos(spiralAngle);
         float camY = spiralHeight; // Use height for vertical movement
@@ -618,7 +619,7 @@ void ofApp::update() {
     // Adjust sphere size based on camera distance
     float cameraDistance = cam.getDistance();
     // sphereSize = ofMap(cameraDistance, 0, 1000, 2, 10); // Map camera distance to sphere size (adjust values as needed)
-
+    
 
     gui->update();
 }
@@ -711,7 +712,7 @@ void ofApp::draw() {
     ofSetColor(0, 0, 0);
     ofDrawRectangle(x - 10, y - 10, bounds.width + 20, bounds.height + 20);
     ofSetColor(255, 255, 255);
-    font.drawString(speciesName, x, y + bounds.height);
+    // font.drawString(speciesName, x, y + bounds.height);
 
     // Draw landuse categories on the left side of the window
     ofSetColor(255, 255, 255);

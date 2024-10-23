@@ -14,6 +14,7 @@ public:
     void setup();
     void update();
     void draw();
+    void setCameraMode(std::string cameramovement);
 
     // Key and mouse event handlers
     void keyPressed(int key);
