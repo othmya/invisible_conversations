@@ -32,7 +32,7 @@ public:
     float cameraDistance;
     // Data storage
     std::vector<ofVec3f> points; // Stores the 3D points
-    std::vector<std::string> paths; // Stores the full paths
+    // std::vector<std::string> paths; // Stores the full paths
     std::vector<std::string> speciesNames; // Stores the species names
     std::vector<std::string> remarks; // Stores the remarks for each point
     std::vector<std::string> landuseCategories; // Stores landuse categories
@@ -40,7 +40,7 @@ public:
 
     // Original data storage
     std::vector<ofVec3f> originalPoints; // Store original points
-    std::vector<std::string> originalPaths; // Store original paths
+    // std::vector<std::string> originalPaths; // Store original paths
     std::vector<std::string> originalSpeciesNames; // Store original species names
     std::vector<std::string> originalRemarks; // Store original remarks
     std::vector<std::string> originalLanduseCategories; // Store original landuse categories

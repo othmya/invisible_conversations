@@ -125,12 +125,12 @@ void ofApp::setup() {
                     points.push_back(ofVec3f(x, y, z));
 
                     // Extract and store the path (This is where the MP3 file is stored)
-                    std::string path = json[i].isMember("path") ? json[i]["path"].asString() : "";
+                    // std::string path = json[i].isMember("path") ? json[i]["path"].asString() : "";
                     // size_t pos = path.find_last_of('/');
                     // if (pos != std::string::npos) {
                     //     path = path.substr(pos + 1);
                     // }
-                    paths.push_back(path); // Store the processed path
+                    // paths.push_back(path); // Store the processed path
 
                     // Extract and store the species name
                     std::string species = json[i].isMember("sp") ? json[i]["sp"].asString() : "";
@@ -319,7 +319,6 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
-    float currentTime = ofGetElapsedTimef();
 
     // Smoothly move towards the target position
     currentPosition = currentPosition.getInterpolated(targetPosition, transitionSpeed);
@@ -335,8 +334,8 @@ void ofApp::update() {
         int targetNodeIndex = -1; // Initialize to an invalid index
 
         // Check if the bias category is valid
-        bool isBiasCategoryValid = (landuseCategoryMap.find(biasCategory) != landuseCategoryMap.end()) ||
-                                   (timeCategoryMap.find(biasCategory) != timeCategoryMap.end());
+        // bool isBiasCategoryValid = (landuseCategoryMap.find(biasCategory) != landuseCategoryMap.end()) ||
+        //                            (timeCategoryMap.find(biasCategory) != timeCategoryMap.end());
         
 
         // Define a smaller radius for stricter clustering check
@@ -365,13 +364,13 @@ void ofApp::update() {
                         broaderCategory = category; // For species, we use the species name directly
                     }
     
-                    ofLog() << "Category: " << category << ", Broader category: " << broaderCategory;
+                    // ofLog() << "Category: " << category << ", Broader category: " << broaderCategory;
 
                     // Check if the current point's broader category matches the bias category
                     if (broaderCategory == biasCategory) {
                         biasedNodes.push_back(i);
                         categoryCount[i] += 1 + biasStrength;  // Add extra weight based on bias strength
-                        ofLog() << "Biased node found: " << i;
+                        // ofLog() << "Biased node found: " << i;
                     }
                 }
             }
