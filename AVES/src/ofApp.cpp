@@ -478,13 +478,13 @@ void ofApp::update() {
         }
 
         // Adjust the local walk distance threshold dynamically based on the clustering
-        if (targetNodeIndex != -1) {
-            localWalkDistanceThreshold = std::max(localWalkDistanceThreshold * 0.6f, 0.5f);  // More aggressive reduction
-            transitionSpeed = std::max(transitionSpeed * 0.6f, 0.005f);  // More aggressive reduction
-        } else {
-            localWalkDistanceThreshold = std::min(localWalkDistanceThreshold * 1.5f, 25.0f);  // More aggressive increase
-            transitionSpeed = std::min(transitionSpeed * 1.5f, 0.3f);  // More aggressive increase
-        }
+        // if (targetNodeIndex != -1) {
+        //     localWalkDistanceThreshold = std::max(localWalkDistanceThreshold * 0.6f, 0.5f);  // More aggressive reduction
+        //     transitionSpeed = std::max(transitionSpeed * 0.6f, 0.005f);  // More aggressive reduction
+        // } else {
+        //     localWalkDistanceThreshold = std::min(localWalkDistanceThreshold * 1.5f, 25.0f);  // More aggressive increase
+        //     transitionSpeed = std::min(transitionSpeed * 1.5f, 0.3f);  // More aggressive increase
+        // }
     }
             // playsounds
     std::vector<NodeWithDistance> nodesWithDistances;
@@ -502,32 +502,39 @@ void ofApp::update() {
     }
     // 
             // Play sounds for the closest 6 nodes (active + 5 nearest)
-    for (int i = 0; i < nodesWithDistances.size(); ++i) {
-        int nodeIndex = nodesWithDistances[i].index;
-        ofVec3f nodePosition = points[nodeIndex];
+for (int i = 0; i < nodesWithDistances.size(); ++i) {
+    int nodeIndex = nodesWithDistances[i].index;
+    ofVec3f nodePosition = points[nodeIndex];
 
-        // If sound isn't already playing, start playing with fade-in effect
-        if (soundPlayers.find(nodeIndex) == soundPlayers.end()) {
-            ofSoundPlayer player;
-            if (player.load(paths[nodeIndex])) {
-                player.setMultiPlay(true);
-                player.setLoop(false);
-                player.play();
-                player.setVolume(0); // Start with volume 0 for fade-in
-                soundPlayers[nodeIndex] = player;
-            }
-        }
-
-        // Fade-in or fade-out depending on distance
-        float distance = currentPosition.distance(nodePosition);
-        float targetVolume = ofMap(distance, 0, localWalkDistanceThreshold, 1.0, 0.0, true);
-        float fadeDuration = 2.0f; // Duration for fade-in/out in seconds
-
-        if (soundPlayers[nodeIndex].isPlaying()) {
-            // Gradually adjust volume
-            soundPlayers[nodeIndex].setVolume(ofLerp(soundPlayers[nodeIndex].getVolume(), targetVolume, fadeDuration * ofGetLastFrameTime()));
+    // If sound isn't already playing, start playing with fade-in effect
+    if (soundPlayers.find(nodeIndex) == soundPlayers.end()) {
+        ofSoundPlayer player;
+        if (player.load(paths[nodeIndex])) {
+            player.setMultiPlay(true);
+            player.setLoop(false);
+            player.play();
+            player.setVolume(0); // Start with volume 0 for fade-in
+            soundPlayers[nodeIndex] = player;
         }
     }
+
+    // Fade-in or fade-out depending on distance
+    float distance = currentPosition.distance(nodePosition);
+    float targetVolume = ofMap(distance, 0, localWalkDistanceThreshold, 1.0, 0.0, true);
+    float fadeDuration = 0.05f; // Duration for fade-in/out in seconds
+
+    if (soundPlayers[nodeIndex].isPlaying()) {
+        // Gradually adjust volume
+        soundPlayers[nodeIndex].setVolume(ofLerp(soundPlayers[nodeIndex].getVolume(), targetVolume, fadeDuration * ofGetLastFrameTime()));
+        
+        // Stop sound if it's fully faded out and far away
+        if (targetVolume == 0 && soundPlayers[nodeIndex].getVolume() <= 0.01) {
+            soundPlayers[nodeIndex].stop(); // Stop the sound
+            soundPlayers.erase(nodeIndex);  // Remove it from the map
+        }
+    }
+}
+ofLog()<<"soundPlayers.size "<<soundPlayers.size();
 
     if (cameraMovement == "circular") {
         float radius = 20; // Radius of the circular path
@@ -765,9 +772,9 @@ void ofApp::draw() {
     ofDisableDepthTest();
 
     // Draw species name at the bottom center
-    ofLog()<<"currentNodeIndex "<<currentNodeIndex;
+    // ofLog()<<"currentNodeIndex "<<currentNodeIndex;
     std::string speciesName = speciesNames[currentNodeIndex];
-    ofLog()<<"speciesNamet "<<speciesName;
+    // ofLog()<<"speciesNamet "<<speciesName;
     ofRectangle bounds = font.getStringBoundingBox(speciesName, 0, 0);
     float x = (ofGetWidth() - bounds.width) / 2;
     float y = ofGetHeight() - bounds.height - 20;
