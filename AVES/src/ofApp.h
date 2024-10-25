@@ -127,4 +127,6 @@ public:
     int consecutiveBiasedMoves;
     float biasStrength;
 
+    std::string buttonpressed;
+
 };

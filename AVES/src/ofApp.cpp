@@ -467,14 +467,16 @@ void ofApp::update() {
         
     }
 
-    if (cameraMovement == "circular") {
-        float radius = 20; // Radius of the circular path
-        float speed = 0.1; // Speed of the movement
-        float angle = ofGetElapsedTimef() * speed; // Calculate the angle based on time
+    // if (cameraMovement == "circular") {
+    //     float radius = 20; // Radius of the circular path
+    //     float speed = 0.1; // Speed of the movement
+    //     float angle = ofGetElapsedTimef() * speed; // Calculate the angle based on time
 
-        cam.setPosition(radius * cos(angle), radius * sin(angle), cameraDistance);
-        cam.lookAt(ofVec3f(0, 0, 0)); // Look at the center
-    } else if (cameraMovement == "dolly") {
+    //     cam.setPosition(radius * cos(angle), radius * sin(angle), cameraDistance);
+    //     cam.lookAt(ofVec3f(0, 0, 0)); // Look at the center
+    // }
+    //  else 
+    if (cameraMovement == "dolly") {
         static float distance = 100; // Initial distance
         static float speed = 0.1; // Speed of dolly movement
         static bool dollyIn = true; // Direction of movement
@@ -489,14 +491,16 @@ void ofApp::update() {
 
         cam.setDistance(distance); // Set camera distance
         cam.lookAt(ofVec3f(0, 0, 0)); // Look at the center
-    } else if (cameraMovement == "pan") {
+    } 
+    else if (cameraMovement == "pan") {
         static float panSpeed = 1.5; // Speed of panning
         static float offsetX = 10; // Horizontal offset
 
         offsetX += panSpeed * ofGetLastFrameTime(); // Increment offset based on frame time
         cam.setPosition(offsetX, 0, cameraDistance); // Update camera position
         cam.lookAt(ofVec3f(0, 0, 0)); // Look at the center
-    } else if (cameraMovement == "tilt") {
+    } 
+    else if (cameraMovement == "tilt") {
         static float tiltSpeed = 1.5; // Speed of tilting
         static float tiltAngle = 45; // Tilt angle
 
@@ -517,12 +521,14 @@ void ofApp::update() {
             cam.setPosition(camX, camY, camZ); // Set the new camera position
             cam.lookAt(currentPosition); // Make the camera look at the current position
         }
-    } else if (cameraMovement == "default") {
-        // Restore default camera behavior
-        cam.lookAt(ofVec3f(0, 0, 0)); // Look at the center
-        trackPlayhead = false;
-        sphereSize = original_sphereSize;
-    } else if (cameraMovement == "spiral") {
+    } 
+    // else if (cameraMovement == "default") {
+    //     // Restore default camera behavior
+    //     cam.lookAt(ofVec3f(0, 0, 0)); // Look at the center
+    //     trackPlayhead = false;
+    //     sphereSize = original_sphereSize;
+    // } 
+    else if (cameraMovement == "spiral") {
         
         cam.reset(); // Restore camera to default position and orientation
         cam.setDistance(cameraDistance); // Set to your desired default distance
@@ -614,7 +620,82 @@ void ofApp::update() {
             ofLog() << "Zoom out and pan effect completed";
         }
     }
+    if(buttonpressed=="2"){
+        cameraMovement="";
+        static float distance = 0; // Initial distance
+        static float speed = 0.01; // Speed of dolly movement
+        static bool dollyIn = true; // Direction of movement
 
+        if (distance>=35) {
+        buttonpressed="";
+        }
+        //     distance -= speed; // Move closer
+        //     if (distance <= 5) dollyIn = false; // Change direction
+        // } else {
+        distance += speed; // Move away
+        //     if (distance >= 150) dollyIn = true; // Change directionmake
+        cam.setPosition(ofVec3f(0, 0, 0));
+        cam.setDistance(distance); // Set camera distance
+        cam.lookAt(ofVec3f(0, 0, 0)); // Look at the center
+        cam.move(ofVec3f(0, 0, 0));
+        distanceThreshold += 0.1;
+        ofLog()<<distance<<" and the button preseed "<<buttonpressed;
+
+        // 
+        // ofVec3f center(0, 0, 0); // Assuming the center is at (0,0,0)
+        // float zoomDistance = 10; // Adjust this value to set how close you want to zoom
+        // colorMode = "Species";
+
+        // cam.setPosition(center);
+        // cam.move(0, 0, zoomDistance);
+        // cam.lookAt(center);
+
+        // distanceThreshold = 0; // Start value
+        // distanceThresholdSlider->setValue(distanceThreshold);
+        // // Update camera movement mode
+        // // cameraMovement = "default";
+        // // add camera default behaviour
+        // cam.lookAt(ofVec3f(0, 0, 0)); // Look at the center
+        // trackPlayhead = false;
+        // sphereSize = original_sphereSize;
+
+    }
+    else if(buttonpressed=="3"){
+        // cameraMovement = "circular";
+        // ---circular
+        // cameraMovement = "track";
+        
+        trackPlayhead = true;
+        // transitionSpeed = 0.02f;
+        sphereSize = 10;
+        // Track playhead logic
+        if (trackPlayhead) {
+            cameraAngle += 0.001f; // Adjust the speed of the panning effect
+            float radius = 2.0f; // Distance from the playhead
+            float camX = currentPosition.x + radius * sin(cameraAngle);
+            float camY = currentPosition.y + radius * cos(cameraAngle);
+            float camZ = currentPosition.z; // Slightly above the playhead
+            cam.setPosition(camX, camY, camZ); // Set the new camera position
+            cam.lookAt(currentPosition); // Make the camera look at the current position
+        }
+        distanceThreshold = 8; // Start value
+        distanceThresholdSlider->setValue(distanceThreshold);
+        
+        // Update the transition speed slider
+        transitionSpeedSlider->setValue(transitionSpeed);
+
+        // --circular end
+        
+        distanceThreshold = 10; // Start value
+        distanceThresholdSlider->setValue(distanceThreshold);
+
+        sphereSize = original_sphereSize; // Reset sphere size to the original value
+        // // Set initial camera position
+        cam.setPosition(0, 0, 0); // Start closer to the center
+        cam.lookAt(ofVec3f(0, 0, 0));
+
+        ofLog() << "3";
+    }
     // Adjust sphere size based on camera distance
     float cameraDistance = cam.getDistance();
     // sphereSize = ofMap(cameraDistance, 0, 1000, 2, 10); // Map camera distance to sphere size (adjust values as needed)
@@ -722,6 +803,8 @@ void ofApp::draw() {
         yOffset += 20; // Increment y position for the next category
     }
 
+ 
+
     // Draw the GUI last to ensure it's on top
     if (guiVisible) {
         gui->draw();
@@ -810,34 +893,46 @@ void ofApp::keyPressed(int key) {
         distanceThreshold = 0; // Start value
         distanceThresholdSlider->setValue(distanceThreshold);
         // Update camera movement mode
-        cameraMovement = "default";
+        // cameraMovement = "default";
+        // add camera default behaviour
+        cam.lookAt(ofVec3f(0, 0, 0)); // Look at the center
+        trackPlayhead = false;
+        sphereSize = original_sphereSize;
+
+        // 
         ofLog() << "Zoomed in on center, distance threshold set to 0";
 
     } else if (key == '2') {
-        // Switch to "track" camera movement with reduced transition speed
-        cameraMovement = "track";
-        trackPlayhead = true;
-        transitionSpeed = 0.02f;
+        // 2 is zoom from the center to out
+        // first we zom in 
+        // dolly out
+        buttonpressed="2";
+        cameraMovement="";
+        // // Switch to "track" camera movement with reduced transition speed
+        // cameraMovement = "track";
+        // trackPlayhead = true;
+        // // transitionSpeed = 0.02f;
 
-        distanceThreshold = 8; // Start value
-        distanceThresholdSlider->setValue(distanceThreshold);
+        // distanceThreshold = 8; // Start value
+        // distanceThresholdSlider->setValue(distanceThreshold);
         
-        // Update the transition speed slider
-        transitionSpeedSlider->setValue(transitionSpeed);
+        // // Update the transition speed slider
+        // transitionSpeedSlider->setValue(transitionSpeed);
         
-        ofLog() << "Switched to Track mode with reduced transition speed";
+        // ofLog() << "Switched to Track mode with reduced transition speed";
 
     } else if (key == '3') {
-        cameraMovement = "circular";
-        distanceThreshold = 10; // Start value
-        distanceThresholdSlider->setValue(distanceThreshold);
+        buttonpressed="3";
+        // cameraMovement = "circular";
+        // distanceThreshold = 10; // Start value
+        // distanceThresholdSlider->setValue(distanceThreshold);
 
-        sphereSize = original_sphereSize; // Reset sphere size to the original value
-        // Set initial camera position
-        cam.setPosition(0, 0, 0); // Start closer to the center
-        cam.lookAt(ofVec3f(0, 0, 0));
+        // sphereSize = original_sphereSize; // Reset sphere size to the original value
+        // // Set initial camera position
+        // cam.setPosition(0, 0, 0); // Start closer to the center
+        // cam.lookAt(ofVec3f(0, 0, 0));
 
-        ofLog() << "Started zoom out and pan effect";
+        // ofLog() << "Started zoom out and pan effect";
 
     } else if (key == '4') {
         // Change color mode to Time
@@ -845,7 +940,14 @@ void ofApp::keyPressed(int key) {
         ofLog() << "Color mode changed to Time";
 
         cameraMovement = "circular";
+        // add here circular movement from update
+        float radius = 20; // Radius of the circular path
+        float speed = 0.1; // Speed of the movement
+        float angle = ofGetElapsedTimef() * speed; // Calculate the angle based on time
 
+        cam.setPosition(radius * cos(angle), radius * sin(angle), cameraDistance);
+        cam.lookAt(ofVec3f(0, 0, 0)); // Look at the center
+        // 
         localWalkDistanceThreshold = 15.0f; // Adjust this value as needed
         localWalkDistanceThresholdSlider->setValue(localWalkDistanceThreshold);
         
@@ -880,7 +982,7 @@ void ofApp::keyPressed(int key) {
         ofLog() << "Distance threshold decreased to: " << distanceThreshold;
     } else if (key == 'c' || key == 'C') {
         // increase local walk distance threshold by 0.05
-        localWalkDistanceThreshold += 0.5f;
+        localWalkDistanceThreshold += 1;
         // Update the local walk distance threshold slider
         localWalkDistanceThresholdSlider->setValue(localWalkDistanceThreshold);
         ofLog() << "Local walk distance threshold increased to: " << localWalkDistanceThreshold;
@@ -892,9 +994,13 @@ void ofApp::keyPressed(int key) {
         ofLog() << "Local walk distance threshold decreased to: " << localWalkDistanceThreshold;
     } else if (key == 'b' || key == 'B') {
         // increase transition speed by 0.05
-        transitionSpeed += 0.1f;
+        ofLog() << "Transition speed before" << transitionSpeed;
+        if(transitionSpeed <=1 || transitionSpeed>=0){
+            transitionSpeed += 0.1f;
         // Update the transition speed slider
-        transitionSpeedSlider->setValue(transitionSpeed);
+            transitionSpeedSlider->setValue(transitionSpeed);
+        }
+
         ofLog() << "Transition speed increased to: " << transitionSpeed;
     } else if (key == 'n' || key == 'N') {
         // decrease transition speed by 0.05
