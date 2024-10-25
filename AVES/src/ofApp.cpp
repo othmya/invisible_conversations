@@ -730,7 +730,7 @@ void ofApp::update() {
                 static float distance = 100; // Initial distance
         static float speed = 0.1; // Speed of dolly movement
         static bool dollyIn = true; // Direction of movement
-
+        sphereSize=3;
         if (dollyIn) {
             distance -= speed; // Move closer
             if (distance <= 5) dollyIn = false; // Change direction
@@ -774,8 +774,8 @@ void ofApp::update() {
 
 
         colorMode="Landuse";
-        static float wobbleAmount = 0.5; // Amount of wobble
-        static float wobbleSpeed = 1.0; // Speed of wobble
+        static float wobbleAmount = 0.05; // Amount of wobble
+        static float wobbleSpeed = 0.01; // Speed of wobble
 
         float camX = cam.getPosition().x + wobbleAmount * sin(ofGetElapsedTimef() * wobbleSpeed);
         float camY = cam.getPosition().y + wobbleAmount * cos(ofGetElapsedTimef() * wobbleSpeed);
