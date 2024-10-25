@@ -664,9 +664,9 @@ void ofApp::update() {
         // cameraMovement = "circular";
         // ---circular
         // cameraMovement = "track";
-        
+        colorMode = "Species";
         trackPlayhead = true;
-        // transitionSpeed = 0.02f;
+        transitionSpeed = 0.02f;
         sphereSize = 10;
         // Track playhead logic
         if (trackPlayhead) {
@@ -689,12 +689,79 @@ void ofApp::update() {
         distanceThreshold = 10; // Start value
         distanceThresholdSlider->setValue(distanceThreshold);
 
-        sphereSize = original_sphereSize; // Reset sphere size to the original value
+        // sphereSize = original_sphereSize; // Reset sphere size to the original value
         // // Set initial camera position
-        cam.setPosition(0, 0, 0); // Start closer to the center
-        cam.lookAt(ofVec3f(0, 0, 0));
+        // cam.setPosition(0, 0, 0); // Start closer to the center
+        // cam.lookAt(ofVec3f(0, 0, 0));
+
+                // // Switch to "track" camera movement with reduced transition speed
+;
 
         ofLog() << "3";
+    }
+    else if(buttonpressed=="4"){
+        colorMode = "Time";        
+        ofLog() << "Color mode changed to Time";
+
+        cameraMovement = "circular";
+        // circula
+
+        // end circular
+        // add here circular movement from update
+        float radius = 20; // Radius of the circular path
+        float speed = 0.1; // Speed of the movement
+        float angle = ofGetElapsedTimef() * speed; // Calculate the angle based on time
+
+        cam.setPosition(radius * cos(angle), radius * sin(angle), cameraDistance);
+        cam.lookAt(ofVec3f(0, 0, 0)); // Look at the center
+        // 
+        localWalkDistanceThreshold = 15.0f; // Adjust this value as needed
+        localWalkDistanceThresholdSlider->setValue(localWalkDistanceThreshold);
+        
+        // Increase transition speed
+        // transitionSpeed = 0.05f; // Adjust this value as needed
+        // transitionSpeedSlider->setValue(transitionSpeed);
+        
+        // Set bias to midnight
+        sphereSize = original_sphereSize; 
+        biasCategory = "midnight";
+
+    }
+    else if(buttonpressed=="5"){
+        // switching to landuse and wobble
+        colorMode="Landuse";
+        static float wobbleAmount = 0.5; // Amount of wobble
+        static float wobbleSpeed = 1.0; // Speed of wobble
+
+        float camX = cam.getPosition().x + wobbleAmount * sin(ofGetElapsedTimef() * wobbleSpeed);
+        float camY = cam.getPosition().y + wobbleAmount * cos(ofGetElapsedTimef() * wobbleSpeed);
+        float camZ = cam.getPosition().z;
+
+        cam.setPosition(camX, camY, camZ); // Set the new camera position
+        cam.lookAt(ofVec3f(0, 0, 0)); // Look at the center
+
+    }
+    else if(buttonpressed=="6"){
+        //spiral with infinite zoom out
+            cam.reset(); // Restore camera to default position and orientation
+        cam.setDistance(cameraDistance); // Set to your desired default distance
+        trackPlayhead = false; // Reset tracking when camera is restored
+        sphereSize = original_sphereSize; // Reset sphere size to the original value
+
+        static float spiralAngle = 0; // Angle for the spiral movement
+        static float spiralRadius = 20; // Initial radius
+        static float spiralHeight = 0; // Height offset
+
+        spiralAngle += 0.005; // Increment the angle more gently
+        spiralRadius += 0.01; // Gradually increase the radius more gently
+        spiralHeight += 0.02; // Gradually increase the height more gently
+
+        float camX = spiralRadius * cos(spiralAngle);
+        float camY = spiralHeight; // Use height for vertical movement
+        float camZ = spiralRadius * sin(spiralAngle);
+
+        cam.setPosition(camX, camY, camZ); // Set the new camera position
+        cam.lookAt(ofVec3f(0, 0, 0)); // Look at the center
     }
     // Adjust sphere size based on camera distance
     float cameraDistance = cam.getDistance();
@@ -936,36 +1003,40 @@ void ofApp::keyPressed(int key) {
 
     } else if (key == '4') {
         // Change color mode to Time
-        colorMode = "Time";        
-        ofLog() << "Color mode changed to Time";
+        buttonpressed='4';
+        // colorMode = "Time";        
+        // ofLog() << "Color mode changed to Time";
 
-        cameraMovement = "circular";
-        // add here circular movement from update
-        float radius = 20; // Radius of the circular path
-        float speed = 0.1; // Speed of the movement
-        float angle = ofGetElapsedTimef() * speed; // Calculate the angle based on time
+        // cameraMovement = "circular";
+        // // add here circular movement from update
+        // float radius = 20; // Radius of the circular path
+        // float speed = 0.1; // Speed of the movement
+        // float angle = ofGetElapsedTimef() * speed; // Calculate the angle based on time
 
-        cam.setPosition(radius * cos(angle), radius * sin(angle), cameraDistance);
-        cam.lookAt(ofVec3f(0, 0, 0)); // Look at the center
-        // 
-        localWalkDistanceThreshold = 15.0f; // Adjust this value as needed
-        localWalkDistanceThresholdSlider->setValue(localWalkDistanceThreshold);
+        // cam.setPosition(radius * cos(angle), radius * sin(angle), cameraDistance);
+        // cam.lookAt(ofVec3f(0, 0, 0)); // Look at the center
+        // // 
+        // localWalkDistanceThreshold = 15.0f; // Adjust this value as needed
+        // localWalkDistanceThresholdSlider->setValue(localWalkDistanceThreshold);
         
-        // Increase transition speed
-        transitionSpeed = 0.05f; // Adjust this value as needed
-        transitionSpeedSlider->setValue(transitionSpeed);
+        // // Increase transition speed
+        // transitionSpeed = 0.05f; // Adjust this value as needed
+        // transitionSpeedSlider->setValue(transitionSpeed);
         
-        // Set bias to midnight
-        biasCategory = "midnight";
+        // // Set bias to midnight
+        // biasCategory = "midnight";
 
     } else if (key == '5') {
-        cam.reset();
-        cam.setDistance(cameraDistance); // Set to your desired default distance
-        trackPlayhead = false; // Reset tracking when zoom is reset
-        cameraMovement = "default"; // Reset camera movement to default
-        sphereSize = original_sphereSize;
+        buttonpressed="5";
+        // scene 5 is to switch to landuse
+
+        // cam.reset();
+        // cam.setDistance(cameraDistance); // Set to your desired default distance
+        // trackPlayhead = false; // Reset tracking when zoom is reset
+        // cameraMovement = "default"; // Reset camera movement to default
+        // sphereSize = original_sphereSize;
         
-        ofLog() << "Reset to default view. Spiral movement will start in 5 seconds.";
+        // ofLog() << "Reset to default view. Spiral movement will start in 5 seconds.";
     } else if (key == '6') {
         cameraMovement = "spiral"; // Change camera movement to spiral
     } else if (key == 'z' || key == 'Z') {
