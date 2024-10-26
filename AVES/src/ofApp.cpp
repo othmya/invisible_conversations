@@ -727,7 +727,7 @@ void ofApp::update() {
         ofLog() << "3";
     }
     else if(buttonpressed=="4"){
-                static float distance = 100; // Initial distance
+        static float distance = 100; // Initial distance
         static float speed = 0.1; // Speed of dolly movement
         static bool dollyIn = true; // Direction of movement
         sphereSize=3;
@@ -743,14 +743,15 @@ void ofApp::update() {
         cam.lookAt(ofVec3f(0, 0, 0)); // Look at the center
     }
     else if(buttonpressed=="5"){
-        colorMode = "Time";        
+               
         ofLog() << "Color mode changed to Time";
 
-        cameraMovement = "circular";
+        // cameraMovement = "circular";
         // circula
 
         // end circular
         // add here circular movement from update
+        biasCategory = "midnight";
         float radius = 20; // Radius of the circular path
         float speed = 0.1; // Speed of the movement
         float angle = ofGetElapsedTimef() * speed; // Calculate the angle based on time
@@ -766,23 +767,28 @@ void ofApp::update() {
         
         // Set bias to midnight
         sphereSize = original_sphereSize; 
-        biasCategory = "midnight";
+        
 
     }
     else if(buttonpressed=="6"){
         // switching to landuse and wobble
+            float radius = 20; // Radius of the circular path
+        float speed = 0.1; // Speed of the movement
+        float angle = ofGetElapsedTimef() * speed; // Calculate the angle based on time
 
-
-        colorMode="Landuse";
-        static float wobbleAmount = 0.05; // Amount of wobble
-        static float wobbleSpeed = 0.01; // Speed of wobble
-
-        float camX = cam.getPosition().x + wobbleAmount * sin(ofGetElapsedTimef() * wobbleSpeed);
-        float camY = cam.getPosition().y + wobbleAmount * cos(ofGetElapsedTimef() * wobbleSpeed);
-        float camZ = cam.getPosition().z;
-
-        cam.setPosition(camX, camY, camZ); // Set the new camera position
+        cam.setPosition(radius * cos(angle), radius * sin(angle), cameraDistance);
         cam.lookAt(ofVec3f(0, 0, 0)); // Look at the center
+
+        
+        // static float wobbleAmount = 0.05; // Amount of wobble
+        // static float wobbleSpeed = 0.01; // Speed of wobble
+
+        // float camX = cam.getPosition().x + wobbleAmount * sin(ofGetElapsedTimef() * wobbleSpeed);
+        // float camY = cam.getPosition().y + wobbleAmount * cos(ofGetElapsedTimef() * wobbleSpeed);
+        // float camZ = cam.getPosition().z;
+
+        // cam.setPosition(camX, camY, camZ); // Set the new camera position
+        // cam.lookAt(ofVec3f(0, 0, 0)); // Look at the center
 
     }
     else if(buttonpressed=="7"){
@@ -1079,6 +1085,7 @@ void ofApp::keyPressed(int key) {
     } else if (key == '5') {
         localWalkDistanceThreshold = 15.0f; // Adjust this value as needed
         localWalkDistanceThresholdSlider->setValue(localWalkDistanceThreshold);
+        colorMode = "Time"; 
         buttonpressed="5";
         // scene 5 is to switch to landuse
 
@@ -1091,48 +1098,49 @@ void ofApp::keyPressed(int key) {
         // ofLog() << "Reset to default view. Spiral movement will start in 5 seconds.";
     } else if (key == '6') {
         cameraMovement = ""; // Change camera movement to spiral
+        colorMode="Landuse";
         buttonpressed="6";
     }
     else if (key == '7') {
         cameraMovement = ""; // Change camera movement to spiral
         buttonpressed="7";
-    } else if (key == 'z' || key == 'Z') {
+    } else if (key == 'x' || key == 'X') {
         // Increase distance threshold by 0.05
         distanceThreshold += 1;
         // Update the distance threshold slider
         distanceThresholdSlider->setValue(distanceThreshold);
         ofLog() << "Distance threshold increased to: " << distanceThreshold;
-    } else if (key == 'x' || key == 'X') {
+    } else if (key == 'z' || key == 'Z') {
         // Decrease distance threshold by 0.05
         distanceThreshold -= 1;
         // Update the distance threshold slider
         distanceThresholdSlider->setValue(distanceThreshold);
         ofLog() << "Distance threshold decreased to: " << distanceThreshold;
-    } else if (key == 'c' || key == 'C') {
+    } else if (key == 'v' || key == 'V') {
         // increase local walk distance threshold by 0.05
         localWalkDistanceThreshold += 1;
         // Update the local walk distance threshold slider
         localWalkDistanceThresholdSlider->setValue(localWalkDistanceThreshold);
         ofLog() << "Local walk distance threshold increased to: " << localWalkDistanceThreshold;
-    } else if (key == 'v' || key == 'V') {
+    } else if (key == 'c' || key == 'C') {
         // decrease local walk distance threshold by 0.05
         localWalkDistanceThreshold -= 0.5f;
         // Update the local walk distance threshold slider
         localWalkDistanceThresholdSlider->setValue(localWalkDistanceThreshold);
         ofLog() << "Local walk distance threshold decreased to: " << localWalkDistanceThreshold;
-    } else if (key == 'b' || key == 'B') {
+    } else if (key == 'n' || key == 'N') {
         // increase transition speed by 0.05
         ofLog() << "Transition speed before" << transitionSpeed;
         if(transitionSpeed <=1 || transitionSpeed>=0){
-            transitionSpeed += 0.1f;
+            transitionSpeed += 0.05f;
         // Update the transition speed slider
             transitionSpeedSlider->setValue(transitionSpeed);
         }
 
         ofLog() << "Transition speed increased to: " << transitionSpeed;
-    } else if (key == 'n' || key == 'N') {
+    } else if (key == 'b' || key == 'b') {
         // decrease transition speed by 0.05
-        transitionSpeed -= 0.1f;
+        transitionSpeed -= 0.05f;
         // Update the transition speed slider
         transitionSpeedSlider->setValue(transitionSpeed);
         ofLog() << "Transition speed decreased to: " << transitionSpeed;
